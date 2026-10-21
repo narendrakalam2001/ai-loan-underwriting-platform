@@ -1,0 +1,28 @@
+# ============================================================
+# DOCKERFILE.dashboard — Streamlit Ops Dashboard
+# ============================================================
+
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+COPY requirements_dashboard.txt .
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements_dashboard.txt
+
+COPY monitoring/  ./monitoring/
+COPY frontend/    ./frontend/
+COPY src/config.py ./src/config.py
+COPY src/__init__.py ./src/__init__.py
+COPY models/      ./models/
+COPY logs/        ./logs/
+COPY data/        ./data/
+
+EXPOSE 8501
+
+CMD ["streamlit", "run", "monitoring/dashboard.py", \
+     "--server.port=8501", "--server.address=0.0.0.0", \
+     "--server.headless=true"]

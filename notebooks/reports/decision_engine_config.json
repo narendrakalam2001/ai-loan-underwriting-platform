@@ -1,0 +1,169 @@
+{
+  "version": "0.1-simulation",
+  "note": "Thresholds tuned on a SIMULATED application portfolio (credit and fraud datasets share no key). Re-tune on real joined data.",
+  "bands": {
+    "pd_lo": 0.05,
+    "pd_hi": 0.1,
+    "fraud_lo": 0.020000000000000004,
+    "fraud_hi": 0.05
+  },
+  "decision_matrix": {
+    "rows": "PD band low/medium/high",
+    "cols": "fraud band low/medium/high",
+    "values": {
+      "0": "APPROVE",
+      "1": "REVIEW",
+      "2": "DECLINE"
+    },
+    "matrix": [
+      [
+        0,
+        1,
+        2
+      ],
+      [
+        0,
+        1,
+        2
+      ],
+      [
+        2,
+        2,
+        2
+      ]
+    ]
+  },
+  "reason_codes": {
+    "0-0": "CLEAN",
+    "0-1": "FRAUD_REVIEW",
+    "0-2": "FRAUD_HIGH",
+    "1-0": "CLEAN_PRICE_UP",
+    "1-1": "FRAUD_REVIEW",
+    "1-2": "FRAUD_HIGH",
+    "2-0": "PD_HIGH",
+    "2-1": "PD_HIGH",
+    "2-2": "PD_HIGH+FRAUD_HIGH"
+  },
+  "economics": {
+    "loan_amount": 10000,
+    "margin_rate": 0.08,
+    "lgd": 0.6,
+    "fraud_loss_rate": 1.0,
+    "review_cost": 25,
+    "review_fraud_catch": 0.85,
+    "review_credit_catch": 0.5,
+    "review_false_decline": 0.1,
+    "assumed_application_fraud_rate": 0.01
+  },
+  "fraud_prior_shift": {
+    "training_prevalence": 0.001667101358352777,
+    "application_prevalence": 0.01
+  },
+  "credit_preprocessing": {
+    "caps": {
+      "revolving_util": 1.095546571429999,
+      "debt_ratio": 643.9199999999983,
+      "monthly_income": 33928.18000000085
+    },
+    "age_median": 52.0,
+    "feature_medians": {
+      "revolving_util": 0.153908,
+      "age": 52.0,
+      "debt_ratio": 0.295294,
+      "log_income": 8.596743,
+      "open_credit_lines": 8.0,
+      "real_estate_loans": 1.0,
+      "dependents": 0.0,
+      "total_delinq": 0.0,
+      "severity_score": 0.0,
+      "monthly_debt_payment": 1616.706052,
+      "over_limit_flag": 0.0,
+      "delinq_sentinel_flag": 0.0,
+      "income_missing": 0.0,
+      "dependents_missing": 0.0
+    },
+    "features": [
+      "revolving_util",
+      "age",
+      "debt_ratio",
+      "log_income",
+      "open_credit_lines",
+      "real_estate_loans",
+      "dependents",
+      "total_delinq",
+      "severity_score",
+      "monthly_debt_payment",
+      "over_limit_flag",
+      "delinq_sentinel_flag",
+      "income_missing",
+      "dependents_missing"
+    ],
+    "monotonic_constraints": {
+      "revolving_util": 1,
+      "age": 0,
+      "debt_ratio": 0,
+      "log_income": 0,
+      "open_credit_lines": 0,
+      "real_estate_loans": 0,
+      "dependents": 0,
+      "total_delinq": 1,
+      "severity_score": 1,
+      "monthly_debt_payment": 0,
+      "over_limit_flag": 0,
+      "delinq_sentinel_flag": 0,
+      "income_missing": 0,
+      "dependents_missing": 0
+    }
+  },
+  "fraud_features": [
+    "V1",
+    "V2",
+    "V3",
+    "V4",
+    "V5",
+    "V6",
+    "V7",
+    "V8",
+    "V9",
+    "V10",
+    "V11",
+    "V12",
+    "V13",
+    "V14",
+    "V15",
+    "V16",
+    "V17",
+    "V18",
+    "V19",
+    "V20",
+    "V21",
+    "V22",
+    "V23",
+    "V24",
+    "V25",
+    "V26",
+    "V27",
+    "V28",
+    "log_amount",
+    "hour_sin",
+    "hour_cos"
+  ],
+  "calibration": {
+    "credit": "isotonic (separate calibration split)",
+    "fraud": "Platt / sigmoid (separate calibration split)"
+  },
+  "metrics_holdout": {
+    "credit_roc_auc": 0.8647683700594703,
+    "credit_ks": 0.5852047833789054,
+    "fraud_roc_auc": 0.9426326845161834,
+    "fraud_pr_auc": 0.7795789597760275
+  },
+  "metrics_eval_portfolio": {
+    "profit_per_applicant": 511.49263721552876,
+    "approve_%": 82.97858099062918,
+    "review_%": 0.18741633199464525,
+    "decline_%": 16.834002677376173,
+    "final_approval_%": 83.1392235609103
+  },
+  "fairness_age_adverse_impact_ratio": 0.7310749025744883
+}

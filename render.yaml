@@ -1,0 +1,49 @@
+# ============================================================
+# RENDER.COM DEPLOYMENT — AI Loan Underwriting Platform
+# ============================================================
+# Deploys all three services: the FastAPI underwriting API, the
+# Streamlit ops dashboard, and the Streamlit user portal.
+# Free-tier services spin down when idle — the first request
+# after idling may take 30-60s (cold start).
+# ============================================================
+
+services:
+  # ── FastAPI Underwriting API ────────────────────────────────
+  - type: web
+    name: ai-loan-underwriting-api
+    runtime: python
+    plan: free
+    # Module 5: build the chatbot's knowledge-base index at deploy time.
+    buildCommand: pip install -r requirements_api.txt && python scripts/ingest_knowledge_base.py
+    startCommand: uvicorn serving.api:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      # Optional: without a key the API uses its offline template/rules fallbacks.
+      - key: GEMINI_API_KEY
+        sync: false
+
+  # ── Streamlit Ops Dashboard (internal staff view) ────────────
+  - type: web
+    name: ai-loan-underwriting-dashboard
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements_dashboard.txt
+    startCommand: streamlit run monitoring/dashboard.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+
+  # ── Streamlit User Portal ────────────────────────────────────
+  - type: web
+    name: ai-loan-underwriting-portal
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements_dashboard.txt
+    startCommand: streamlit run frontend/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: UNDERWRITING_API_URL
+        value: https://ai-loan-underwriting-api.onrender.com

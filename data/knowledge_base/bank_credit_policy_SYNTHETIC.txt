@@ -1,0 +1,77 @@
+SYNTHETIC INTERNAL CREDIT POLICY — Bharat Trust Bank (FICTITIOUS)
+Internal reference document — Retail Lending Division
+(This bank, and this policy, are entirely fictitious — written for a
+capstone project demo. Any resemblance to a real institution's policy
+is coincidental.)
+
+1. ELIGIBILITY
+
+1.1 Minimum age: 21 years at the time of application, maximum age at
+    loan maturity: 65 years for salaried applicants, 70 years for
+    self-employed applicants with demonstrated business continuity.
+1.2 Minimum monthly income: ₹5,000 (verified or declared). Applicants
+    below this floor are routed to manual review rather than auto-
+    declined, since a co-applicant or alternative income evidence can
+    qualify them.
+1.3 Minimum employment/business tenure: 1 year in current job (salaried)
+    or 2 years of business continuity (self-employed).
+
+2. LOAN AMOUNT AND TENURE
+
+2.1 Personal loans: ₹50,000 to ₹25,00,000, tenure 6 to 60 months.
+2.2 The requested amount is assessed against the applicant's income and
+    existing obligations as part of the risk model; there is no fixed
+    income-multiple cap in this platform's automated rules.
+
+3. DEBT-TO-INCOME (DTI) POLICY
+
+3.1 The platform computes a debt ratio = existing monthly debt payments
+    (EMIs) divided by monthly income. A debt ratio ABOVE 100% (i.e.
+    obligations exceed income) is declined automatically by hard rule,
+    regardless of credit score.
+3.2 A debt ratio below 100% is not an automatic decline: it is one of the
+    inputs to the credit risk model, where a higher ratio (and especially
+    one above roughly 50-55%) increases the predicted default probability
+    and so makes MANUAL_REVIEW or DECLINE more likely.
+
+4. DELINQUENCY HISTORY POLICY
+
+4.1 Three or more instances of 90+ day delinquency in the last 24 months
+    results in automatic decline, regardless of current income or DTI.
+4.2 One or two instances of 90+ day delinquency are NOT an automatic
+    decline; they are a strong risk input to the credit risk model and
+    will usually push the predicted default probability up.
+4.3 Any history of 30-59 or 60-89 day delinquency alone (without a 90+
+    day instance) is treated as a risk-scoring input rather than a hard
+    rule trigger.
+
+5. DEPENDENTS AND HOUSEHOLD SIZE
+
+5.1 Applications from households with 6 or more dependents are routed to
+    manual review to assess per-capita disposable income more closely,
+    rather than relying on gross household income alone.
+
+6. DOCUMENT REQUIREMENTS
+
+6.1 All applicants: government-issued photo ID, address proof.
+6.2 Salaried applicants: last 3 months' salary slips, last 6 months'
+    bank statement showing salary credits.
+6.3 Self-employed applicants: last 2 years' ITR, last 12 months' bank
+    statement, business continuity proof (GST registration or
+    equivalent).
+
+7. PRICING
+
+7.1 Base rate is set monthly by the Treasury desk. Final rate = base
+    rate + risk premium, where the risk premium is determined by the
+    applicant's model-predicted default probability band (LOW/MEDIUM/
+    HIGH as produced by Module 1 of the underwriting platform).
+
+8. REVIEW AND ESCALATION
+
+8.1 Any MANUAL_REVIEW decision must be actioned by a human underwriter
+    within 2 business days.
+8.2 An applicant may request the specific reason for a DECLINE decision;
+    the underwriting platform's Decision Engine (Module 4) logs a
+    structured, human-readable explanation for every decision to support
+    this.

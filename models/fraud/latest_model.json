@@ -1,0 +1,5 @@
+{
+  "model_name": "fraud_model_XGBoost_20261015_121938.joblib",
+  "threshold": 0.5,
+  "model_card_path": "models\\fraud\\model_card_XGBoost_20261015_121938.json"
+}

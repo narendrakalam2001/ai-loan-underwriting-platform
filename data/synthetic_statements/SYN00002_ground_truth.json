@@ -1,0 +1,35 @@
+{
+  "application_id": "SYN00002",
+  "account_holder": "Rushil Saini",
+  "employer": "Sen PLC",
+  "account_number": "40265423511",
+  "bank_name": "Unity Commercial Bank",
+  "monthly_income": [
+    141345.5,
+    144273.87,
+    139573.62,
+    140432.98,
+    140253.56,
+    133396.5
+  ],
+  "avg_monthly_income": 139879.34,
+  "income_stability": "Good",
+  "monthly_emi_total": 14535.47,
+  "month_end_balances": [
+    48545.07,
+    73444.4,
+    79857.17,
+    94181.72,
+    104681.78,
+    141087.85
+  ],
+  "balance_stability": "Moderate",
+  "statement_months": [
+    "Apr-2026",
+    "May-2026",
+    "Jun-2026",
+    "Jul-2026",
+    "Aug-2026",
+    "Sep-2026"
+  ]
+}

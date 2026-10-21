@@ -1,0 +1,153 @@
+SYNTHETIC LOAN FAQ — 50 Q&A PAIRS (ILLUSTRATIVE)
+Written for this capstone project's demo chatbot/RAG knowledge base.
+
+Q1: What documents do I need to apply for a loan?
+A1: You'll need a government-issued photo ID, address proof, and income proof (salary slips for salaried applicants, or ITR and bank statements for self-employed applicants). Uploading a bank statement PDF also lets our Document Intelligence module auto-detect your income and existing obligations.
+
+Q2: How long does the loan approval process take?
+A2: Most applications receive an automated decision within 30 seconds. Applications routed to MANUAL_REVIEW are typically actioned by an underwriter within 2 business days.
+
+Q3: What is the minimum age to apply for a loan?
+A3: You must be at least 21 years old at the time of application. The maximum age at loan maturity is 65 for salaried applicants and 70 for self-employed applicants.
+
+Q4: What is the minimum income required?
+A4: ₹5,000/month. If your income is below this, your application is routed to manual review rather than declined outright.
+
+Q5: Can I apply with a co-applicant?
+A5: Yes. Adding a co-applicant with sufficient income can help you qualify for a larger loan amount or bring your debt-to-income ratio within our policy ceiling.
+
+Q6: What is debt-to-income ratio and why does it matter?
+A6: It's your total monthly debt obligations (existing EMIs plus the proposed new EMI) divided by your verified monthly income. If your debt ratio is above 100% (obligations exceed income) the application is declined automatically; below that, a higher ratio raises your predicted default risk and makes manual review or decline more likely.
+
+Q7: Why was my loan declined?
+A7: Every decision comes with a plain-English explanation showing the specific reason — a model-driven risk score, or a hard policy rule like high debt-to-income ratio or a serious delinquency history. Check your Application Tracker for the exact reason.
+
+Q8: Can I appeal a decline decision?
+A8: You can reapply after addressing the specific reason shown in your decision explanation — for example, after reducing existing EMIs or waiting for your payment history to improve. The portal also shows improvement suggestions tailored to your decision.
+
+Q9: What is a CIBIL score and does it affect my application?
+A9: A CIBIL score summarizes your credit repayment history. Our model uses detailed payment-history features (like number of late payments) that are conceptually similar to what feeds a CIBIL score, producing its own risk assessment rather than consuming a CIBIL score directly.
+
+Q10: I have no credit history — can I still get a loan?
+A10: Yes. A 'thin file' (no credit history) is treated differently from a poor credit history. We use your bank statement data as a supplementary signal to assess first-time borrowers fairly.
+
+Q11: What loan amount can I get?
+A11: There is no fixed income multiple; the requested amount is assessed together with your income, existing obligations and credit history. Personal loans are offered in the ₹50,000-₹25,00,000 range.
+
+Q12: What is the loan tenure range?
+A12: Personal loans are available from 6 months to 60 months (5 years).
+
+Q13: How is my interest rate decided?
+A13: Your rate is the bank's base rate plus a risk premium determined by your model-predicted default risk band (LOW, MEDIUM, or HIGH).
+
+Q14: Can I prepay my loan early?
+A14: Yes, prepayment is generally allowed. Check your specific loan offer letter for any applicable prepayment charges and the minimum lock-in period, if any.
+
+Q15: What happens if I miss an EMI payment?
+A15: A missed payment is reported and affects your future creditworthiness. If you anticipate missing a payment, contact support in advance — proactive communication is viewed much more favorably than a silent missed payment.
+
+Q16: How do I check my application status?
+A16: Use the Application Tracker on the portal homepage and enter your Application ID (format: APPxxxxxxxxxx) to see your current status and full decision details.
+
+Q17: What does MANUAL_REVIEW status mean?
+A17: Your application needs a closer look by a human underwriter — this happens for borderline risk scores or when a policy rule (like high dependents count) requires individual judgment rather than an automated decision. Expect a decision within 2 business days.
+
+Q18: Can I upload my bank statement for a faster decision?
+A18: Yes — uploading your bank statement lets our Document Intelligence module automatically detect your income stability, employer, and existing obligations, which strengthens your application's data quality.
+
+Q19: What file format is accepted for the bank statement?
+A19: PDF only, up to 200MB.
+
+Q20: Is my uploaded bank statement data secure?
+A20: Uploaded documents are parsed solely to extract underwriting signals (income, employer, obligations) and are not shared outside the underwriting process.
+
+Q21: What is a serious delinquency and how does it affect my application?
+A21: Three or more instances of being 90+ days late on a payment within the last 24 months triggers an automatic decline under our policy, regardless of income. One or two such instances do not trigger an automatic decline, but they raise your predicted default risk, which can lead to manual review or decline.
+
+Q22: Does having many dependents hurt my application?
+A22: Not automatically — but 6 or more dependents routes your application to manual review so an underwriter can assess per-capita disposable income more closely, since gross household income alone can be misleading.
+
+Q23: What is revolving credit utilization?
+A23: It's the percentage of your total available credit limit (across credit cards and credit lines) that you're currently using. Utilization above 100% (i.e. over your limit) is treated as a risk signal.
+
+Q24: Can self-employed applicants apply?
+A24: Yes. Self-employed applicants need 2 years of business continuity, their last 2 years' ITR, and 12 months of bank statements, plus GST registration or equivalent proof.
+
+Q25: What loan purposes are supported?
+A25: Personal, Home Renovation, Education, Medical, Business, and Wedding loans are all supported through the same application flow.
+
+Q26: How is my EMI calculated?
+A26: Using the standard reducing-balance formula based on your approved loan amount, tenure, and risk-based interest rate. The exact EMI is shown on your Decision Dashboard once approved.
+
+Q27: Can I change my loan amount after applying?
+A27: Not on an already-submitted application — please submit a new application with the updated amount, which will be assessed independently.
+
+Q28: What is fraud screening and why does my application go through it?
+A28: Every application is screened by our Fraud Detection engine before the credit check runs, checking for suspicious patterns like implausible loan amounts. This protects both the bank and legitimate applicants from identity-related fraud.
+
+Q29: My application was flagged for fraud review — what does that mean?
+A29: It means a specific fraud signal (such as an unusually large requested amount) needs a closer look before your credit assessment can proceed. This is not the same as a credit decline, and is often resolved quickly in manual review.
+
+Q30: Do I need a good credit score to get the lowest interest rate?
+A30: Applicants in the model's LOW risk band typically qualify for the lowest rates the bank offers for their loan product, similar to how a 750+ CIBIL score typically earns preferential pricing elsewhere.
+
+Q31: What is the Application ID and where do I find it?
+A31: It's a unique code like APP1A2B3C4D5E generated the moment your application is decided. It's shown on your Decision Dashboard and should be saved to track your application later.
+
+Q32: Can I download a copy of my decision letter?
+A32: Yes, a decision letter PDF is available for download from the Application Tracker once your application has been decided.
+
+Q33: What if I disagree with my decision?
+A33: You can review the specific explanation and improvement suggestions provided, address them, and reapply. For disputes about data accuracy, contact our Grievance Redressal Officer.
+
+Q34: How does the platform combine fraud, credit, and document signals?
+A34: The Decision Engine (Module 4) checks fraud first, then applies credit risk rules and the model score, then factors in document-extraction confidence, producing one final verdict with a weighted confidence score and a combined explanation.
+
+Q35: Is there a fee to apply?
+A35: Applying and receiving a decision is free. Any processing fees applicable to an approved loan are disclosed in your loan offer before disbursement.
+
+Q36: What is APR and how is it different from the interest rate shown?
+A36: APR (Annual Percentage Rate) includes processing fees and other charges on top of the nominal interest rate, giving you the true effective annual cost — always compare offers using APR, not just the headline rate.
+
+Q37: Can NRIs apply for a loan on this platform?
+A37: This demo platform is scoped to resident Indian applicants; NRI lending typically involves additional documentation (FEMA compliance, NRE/NRO account details) not covered in this capstone build.
+
+Q38: What happens to my data if my application is declined?
+A38: Your application data and its audit trail are retained for regulatory and grievance-redressal purposes, consistent with standard lending recordkeeping practices.
+
+Q39: Can I have more than one active loan application?
+A39: Each submission is treated as an independent application with its own Application ID; we recommend waiting for a decision on your current application before submitting another.
+
+Q40: Why do I need to provide my employer's name?
+A40: Employer information (either typed in or auto-detected from your bank statement) helps verify income stability and is one of several signals used in underwriting, not a sole determining factor.
+
+Q41: What does 'income stability: Poor' mean on my document extraction?
+A41: It means your detected salary credits varied significantly month to month in the uploaded statement, which can indicate irregular income — this is one input among several, not an automatic decline trigger.
+
+Q42: Can I use someone else's bank statement?
+A42: No — only upload your own bank statement. Using another person's financial documents is a form of application fraud and will be flagged by our fraud detection checks.
+
+Q43: What's the difference between a mortgage and a personal loan here?
+A43: A mortgage/real estate loan is secured against property and is tracked separately from unsecured personal, education, medical, or wedding loans in your credit profile.
+
+Q44: How often is the credit risk model retrained?
+A44: The model is retrained periodically and only replaces the current production model if it passes 3 statistical gates (F1 improvement, ROC-AUC floor, and generalization-gap ceiling) in our Champion-Challenger system — this prevents a weaker model from being accidentally deployed.
+
+Q45: Does the platform monitor for model drift?
+A45: Yes — a Population Stability Index (PSI) report tracks whether incoming applicant data has started to look statistically different from the data the model was trained on, triggering a retrain recommendation if drift crosses a threshold.
+
+Q46: Is my interest rate fixed or can it change after disbursement?
+A46: Rates quoted at approval are fixed for the loan tenure under standard personal loan terms; always confirm this in your specific loan offer letter.
+
+Q47: What if I made a typo in my application?
+A47: Since each submission is final once decided, please submit a corrected new application. Contact support if the error significantly affected your outcome.
+
+Q48: Can I track my application from my phone?
+A48: Yes, the portal is accessible from any device with a browser — enter your Application ID in the Application Tracker.
+
+Q49: Who do I contact if I have a complaint?
+A49: Every branch and the platform display Grievance Redressal Officer contact details, consistent with standard fair-practice lending norms — reach out through the designated grievance channel for your decision dispute.
+
+Q50: Does applying for a loan affect my credit score?
+A50: A single application check is treated as a soft inquiry for this platform's own model scoring; any formal credit bureau pull as part of a real loan disbursement may be logged as a hard inquiry per standard bureau practice.
+

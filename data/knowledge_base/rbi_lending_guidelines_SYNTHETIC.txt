@@ -1,0 +1,63 @@
+SYNTHETIC LENDING GUIDELINES SUMMARY (ILLUSTRATIVE — NOT THE REAL RBI MASTER CIRCULAR)
+
+This document is a synthetic, illustrative summary written for a capstone
+project demo. It paraphrases widely known, general-knowledge principles of
+responsible retail lending in India. It is NOT an excerpt from, and should
+NOT be cited as, any actual Reserve Bank of India circular or direction.
+See data/knowledge_base/README.md for how to add the real document.
+
+SECTION 1 — FAIR PRACTICES IN LENDING
+
+Lenders are expected to assess a borrower's repayment capacity before
+sanctioning any credit facility, rather than relying solely on collateral
+value. The loan application form should clearly indicate the information
+required, and the fees payable. All key terms and conditions of a loan —
+interest rate, processing fees, prepayment charges, and the method of
+interest application (reducing balance vs flat) — should be communicated
+to the borrower in a document they can keep, before the loan is disbursed.
+
+SECTION 2 — DEBT-TO-INCOME CONSIDERATIONS
+
+A commonly used rule of thumb across retail lenders is that a borrower's
+total monthly debt obligations (existing EMIs plus the proposed new EMI)
+should not exceed roughly 50-55% of verified monthly income for salaried
+applicants, and a somewhat lower threshold for self-employed applicants
+given income variability. Applicants above this threshold are typically
+routed to manual underwriting review rather than being auto-declined
+outright, since compensating factors (e.g. a co-applicant's income,
+substantial savings) can offset a high ratio.
+
+SECTION 3 — KYC AND IDENTITY VERIFICATION
+
+Every loan applicant must be identified through valid Know Your Customer
+(KYC) documents — proof of identity, proof of address, and (for income-
+based lending decisions) proof of income such as salary slips, Form 16,
+or bank statements. Document Intelligence modules that extract income
+and obligations from an uploaded bank statement are a supplementary signal
+and do not replace formal KYC verification.
+
+SECTION 4 — GRIEVANCE REDRESSAL
+
+Lenders are expected to maintain a grievance redressal mechanism and
+display the name and contact details of the Grievance Redressal Officer
+at every branch and on the website. An applicant who is declined a loan
+is entitled to know the principal reason for the decision upon request —
+this is one reason this platform's Decision Engine (Module 4) always
+produces a plain-English explanation alongside every verdict, rather than
+a bare APPROVE/DECLINE flag.
+
+SECTION 5 — INTEREST RATE DISCLOSURE
+
+The Annual Percentage Rate (APR) — the effective annual cost of the loan
+including processing fees — should be disclosed to the borrower, not just
+the nominal interest rate, so that offers from different lenders can be
+compared on a like-for-like basis.
+
+SECTION 6 — FAIR TREATMENT OF VULNERABLE BORROWERS
+
+Special care is expected when assessing applications from first-time
+borrowers, senior citizens, or applicants with limited formal credit
+history — a thin credit file should not, by itself, be treated the same
+as a poor credit history. Alternative data points (such as bank statement
+analysis, as implemented in this platform's Module 3) are an accepted way
+to supplement a thin credit file.

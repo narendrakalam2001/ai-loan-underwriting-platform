@@ -1,0 +1,5 @@
+{
+  "model_name": "credit_model_XGBoost_20261015_164445.joblib",
+  "threshold": 0.2321,
+  "model_card_path": "models\\credit_risk\\model_card_XGBoost_20261015_164445.json"
+}

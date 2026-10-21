@@ -1,0 +1,35 @@
+{
+  "application_id": "SYN00004",
+  "account_holder": "Chakradev Kari",
+  "employer": "Buch-Kaul",
+  "account_number": "16475255341",
+  "bank_name": "Vaayu Digital Bank",
+  "monthly_income": [
+    114600.04,
+    114671.48,
+    116860.37,
+    110298.94,
+    115962.17,
+    109483.47
+  ],
+  "avg_monthly_income": 113646.08,
+  "income_stability": "Good",
+  "monthly_emi_total": 0,
+  "month_end_balances": [
+    96503.72,
+    131716.83,
+    153293.61,
+    200641.06,
+    249768.09,
+    285419.0
+  ],
+  "balance_stability": "Moderate",
+  "statement_months": [
+    "Apr-2026",
+    "May-2026",
+    "Jun-2026",
+    "Jul-2026",
+    "Aug-2026",
+    "Sep-2026"
+  ]
+}

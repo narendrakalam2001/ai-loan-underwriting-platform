@@ -1,0 +1,86 @@
+{
+  "dataset": "GiveMeSomeCredit/cs-training.csv",
+  "split": {
+    "train_rows": 119512,
+    "holdout_rows": 29879,
+    "test_size": 0.2,
+    "stratify": "default",
+    "random_state": 42
+  },
+  "base_default_rate_train": 0.067,
+  "column_rename_map": {
+    "SeriousDlqin2yrs": "default",
+    "RevolvingUtilizationOfUnsecuredLines": "revolving_util",
+    "age": "age",
+    "NumberOfTime30-59DaysPastDueNotWorse": "past_due_30_59",
+    "DebtRatio": "debt_ratio",
+    "MonthlyIncome": "monthly_income",
+    "NumberOfOpenCreditLinesAndLoans": "open_credit_lines",
+    "NumberOfTimes90DaysLate": "late_90",
+    "NumberRealEstateLoansOrLines": "real_estate_loans",
+    "NumberOfTime60-89DaysPastDueNotWorse": "past_due_60_89",
+    "NumberOfDependents": "dependents"
+  },
+  "sentinel_codes": {
+    "columns": [
+      "past_due_30_59",
+      "past_due_60_89",
+      "late_90"
+    ],
+    "codes": [
+      96,
+      98
+    ],
+    "action": "flag + set NaN + impute 0"
+  },
+  "rules": {
+    "age_min_valid": 18,
+    "debt_ratio_when_income_missing": "set NaN",
+    "revolving_util_over_limit_flag": "> 1.0",
+    "missing_flags": [
+      "income_missing",
+      "dependents_missing"
+    ]
+  },
+  "caps_fit_on_train": {
+    "revolving_util": 1.09219485026,
+    "debt_ratio": 633.539999999979,
+    "monthly_income": 35000.0
+  },
+  "medians_fit_on_train": {
+    "age": 52.0,
+    "monthly_income": 5400.0,
+    "dependents": 0.0
+  },
+  "feature_adopt": [
+    "total_delinq",
+    "severity_score",
+    "any_delinq",
+    "monthly_debt_payment",
+    "log_income",
+    "over_limit_flag",
+    "delinq_sentinel_flag",
+    "income_missing"
+  ],
+  "monotonic_constraints_gbm": {
+    "revolving_util": 1,
+    "past_due_30_59": 1,
+    "past_due_60_89": 1,
+    "late_90": 1,
+    "total_delinq": 1,
+    "severity_score": 1
+  },
+  "iv_ranking": {
+    "revolving_util": 1.126,
+    "past_due_30_59": 0.4731,
+    "age": 0.2634,
+    "debt_ratio": 0.076,
+    "open_credit_lines": 0.0729,
+    "monthly_income": 0.0725,
+    "late_90": 0.0408,
+    "past_due_60_89": 0.0408,
+    "dependents": 0.0269,
+    "real_estate_loans": 0.0107
+  },
+  "vif_gate": 5
+}

@@ -1,0 +1,230 @@
+<svg width="100%" viewBox="0 0 1100 868" role="img" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', Arial, sans-serif">
+<title>AI Loan Underwriting Platform — System Architecture</title>
+<desc>Six-layer architecture: data, training pipeline, model governance, serving (fraud gate, credit engine, document floor, confidence, explanation, audit trail, RAG, LLM explainer, letter PDF, chatbot), clients and monitoring.</desc>
+<defs>
+<marker id="a-data" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 2L8 5L2 8" fill="none" stroke="#4a7fd4" stroke-width="1.6"/></marker>
+<marker id="a-train" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 2L8 5L2 8" fill="none" stroke="#8b5cf6" stroke-width="1.6"/></marker>
+<marker id="a-gov" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 2L8 5L2 8" fill="none" stroke="#10b981" stroke-width="1.6"/></marker>
+<marker id="a-serve" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 2L8 5L2 8" fill="none" stroke="#f59e0b" stroke-width="1.6"/></marker>
+<marker id="a-mon" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 2L8 5L2 8" fill="none" stroke="#ef4444" stroke-width="1.6"/></marker>
+<marker id="a-gray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 2L8 5L2 8" fill="none" stroke="#6b7280" stroke-width="1.6"/></marker>
+<marker id="a-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 2L8 5L2 8" fill="none" stroke="#fb7185" stroke-width="1.6"/></marker>
+</defs>
+<rect width="1100" height="868" fill="#ffffff"/>
+<text x="550" y="26" text-anchor="middle" font-size="15" font-weight="700" fill="#1a1a2e">AI Loan Underwriting Platform — System Architecture</text>
+<rect x="10" y="38" width="1080" height="102" rx="8" fill="#0d1b4b" opacity="0.95"/>
+<text x="18" y="54" font-size="10" font-weight="700" fill="#7eb3f7" letter-spacing="1.5">DATA LAYER — training data (left three) · runtime inputs (right two)</text>
+<rect x="28" y="64" width="188" height="64" rx="6" fill="#1a3a7a" stroke="#4a7fd4" stroke-width="0.9"/>
+<text x="122.0" y="87" text-anchor="middle" font-size="12" font-weight="600" fill="#e8f0fe">Give Me Some Credit</text>
+<text x="122.0" y="104" text-anchor="middle" font-size="10" fill="#93b8f7">150,000 loans · 10 features</text>
+<text x="122.0" y="118" text-anchor="middle" font-size="10" fill="#93b8f7">target: 90-day default</text>
+<rect x="244" y="64" width="188" height="64" rx="6" fill="#1a3a7a" stroke="#4a7fd4" stroke-width="0.9"/>
+<text x="338.0" y="87" text-anchor="middle" font-size="12" font-weight="600" fill="#e8f0fe">Credit Card Fraud</text>
+<text x="338.0" y="104" text-anchor="middle" font-size="10" fill="#93b8f7">284,807 txns · V1–V28 + Amount</text>
+<text x="338.0" y="118" text-anchor="middle" font-size="10" fill="#93b8f7">0.17% fraud rate</text>
+<rect x="460" y="64" width="188" height="64" rx="6" fill="#1a3a7a" stroke="#4a7fd4" stroke-width="0.9"/>
+<text x="554.0" y="87" text-anchor="middle" font-size="12" font-weight="600" fill="#e8f0fe">Clean + Validate</text>
+<text x="554.0" y="104" text-anchor="middle" font-size="10" fill="#93b8f7">96/98 sentinels → flag + 0</text>
+<text x="554.0" y="118" text-anchor="middle" font-size="10" fill="#93b8f7">debt_ratio fix · de-duplicate</text>
+<rect x="676" y="64" width="188" height="64" rx="6" fill="#1a3a7a" stroke="#4a7fd4" stroke-width="0.9"/>
+<text x="770.0" y="87" text-anchor="middle" font-size="12" font-weight="600" fill="#e8f0fe">Bank-statement PDF</text>
+<text x="770.0" y="104" text-anchor="middle" font-size="10" fill="#93b8f7">uploaded per applicant</text>
+<text x="770.0" y="118" text-anchor="middle" font-size="10" fill="#93b8f7">PyMuPDF · regex · spaCy</text>
+<rect x="892" y="64" width="188" height="64" rx="6" fill="#1a3a7a" stroke="#4a7fd4" stroke-width="0.9"/>
+<text x="986.0" y="87" text-anchor="middle" font-size="12" font-weight="600" fill="#e8f0fe">Knowledge Base</text>
+<text x="986.0" y="104" text-anchor="middle" font-size="10" fill="#93b8f7">4 SYNTHETIC policy docs</text>
+<text x="986.0" y="118" text-anchor="middle" font-size="10" fill="#93b8f7">TF-IDF index built at deploy</text>
+<line x1="550" y1="140" x2="550" y2="152" stroke="#6b7280" stroke-width="1.3" marker-end="url(#a-gray)"/>
+<rect x="10" y="152" width="1080" height="178" rx="8" fill="#1a0f45" opacity="0.95"/>
+<text x="18" y="168" font-size="10" font-weight="700" fill="#a78bfa" letter-spacing="1.5">TRAINING PIPELINE — one shared orchestrator, run once per engine (credit · fraud)</text>
+<rect x="28" y="178" width="165" height="64" rx="6" fill="#2d1b78" stroke="#7c5cd6" stroke-width="0.9"/>
+<text x="110.5" y="201" text-anchor="middle" font-size="12" font-weight="600" fill="#ede9fe">Feature Engineering</text>
+<text x="110.5" y="218" text-anchor="middle" font-size="10" fill="#b9a6fb">credit 25 cols · fraud 34</text>
+<text x="110.5" y="232" text-anchor="middle" font-size="10" fill="#b9a6fb">ratios · flags · *_was_missing</text>
+<line x1="193" y1="210.0" x2="205" y2="210.0" stroke="#8b5cf6" stroke-width="1.3" marker-end="url(#a-train)"/>
+<rect x="205" y="178" width="165" height="64" rx="6" fill="#2d1b78" stroke="#7c5cd6" stroke-width="0.9"/>
+<text x="287.5" y="201" text-anchor="middle" font-size="12" font-weight="600" fill="#ede9fe">3-way Stratified Split</text>
+<text x="287.5" y="218" text-anchor="middle" font-size="10" fill="#b9a6fb">train_fit · calibration · test</text>
+<text x="287.5" y="232" text-anchor="middle" font-size="10" fill="#b9a6fb">calibration set ≈ 16% of data</text>
+<line x1="370" y1="210.0" x2="382" y2="210.0" stroke="#8b5cf6" stroke-width="1.3" marker-end="url(#a-train)"/>
+<rect x="382" y="178" width="165" height="64" rx="6" fill="#2d1b78" stroke="#7c5cd6" stroke-width="0.9"/>
+<text x="464.5" y="201" text-anchor="middle" font-size="12" font-weight="600" fill="#ede9fe">Resample + Select</text>
+<text x="464.5" y="218" text-anchor="middle" font-size="10" fill="#b9a6fb">SMOTE-style resampling</text>
+<text x="464.5" y="232" text-anchor="middle" font-size="10" fill="#b9a6fb">SelectKBest, k = 10</text>
+<line x1="547" y1="210.0" x2="559" y2="210.0" stroke="#8b5cf6" stroke-width="1.3" marker-end="url(#a-train)"/>
+<rect x="559" y="178" width="165" height="64" rx="6" fill="#2d1b78" stroke="#7c5cd6" stroke-width="0.9"/>
+<text x="641.5" y="201" text-anchor="middle" font-size="12" font-weight="600" fill="#ede9fe">RandomizedSearchCV</text>
+<text x="641.5" y="218" text-anchor="middle" font-size="10" fill="#b9a6fb">up to 14 model families</text>
+<text x="641.5" y="232" text-anchor="middle" font-size="10" fill="#b9a6fb">per-model fail-safe</text>
+<line x1="724" y1="210.0" x2="736" y2="210.0" stroke="#8b5cf6" stroke-width="1.3" marker-end="url(#a-train)"/>
+<rect x="736" y="178" width="165" height="64" rx="6" fill="#2d1b78" stroke="#7c5cd6" stroke-width="0.9"/>
+<text x="818.5" y="201" text-anchor="middle" font-size="12" font-weight="600" fill="#ede9fe">Champion Selection</text>
+<text x="818.5" y="218" text-anchor="middle" font-size="10" fill="#b9a6fb">filter: gap · CV std · min F1</text>
+<text x="818.5" y="232" text-anchor="middle" font-size="10" fill="#b9a6fb">rank by PR-AUC</text>
+<line x1="901" y1="210.0" x2="913" y2="210.0" stroke="#8b5cf6" stroke-width="1.3" marker-end="url(#a-train)"/>
+<rect x="913" y="178" width="165" height="64" rx="6" fill="#2d1b78" stroke="#7c5cd6" stroke-width="0.9"/>
+<text x="995.5" y="201" text-anchor="middle" font-size="12" font-weight="600" fill="#ede9fe">Threshold + Calibration</text>
+<text x="995.5" y="218" text-anchor="middle" font-size="10" fill="#b9a6fb">threshold tuned on cal split</text>
+<text x="995.5" y="232" text-anchor="middle" font-size="10" fill="#b9a6fb">isotonic · Brier ↓</text>
+<rect x="28" y="254" width="165" height="64" rx="6" fill="#2d1b78" stroke="#7c5cd6" stroke-width="0.9"/>
+<text x="110.5" y="277" text-anchor="middle" font-size="12" font-weight="600" fill="#ede9fe">Explainability</text>
+<text x="110.5" y="294" text-anchor="middle" font-size="10" fill="#b9a6fb">SHAP · native XGB contribs</text>
+<text x="110.5" y="308" text-anchor="middle" font-size="10" fill="#b9a6fb">permutation fallback</text>
+<line x1="193" y1="286.0" x2="205" y2="286.0" stroke="#8b5cf6" stroke-width="1.3" marker-end="url(#a-train)"/>
+<rect x="205" y="254" width="165" height="64" rx="6" fill="#2d1b78" stroke="#7c5cd6" stroke-width="0.9"/>
+<text x="287.5" y="277" text-anchor="middle" font-size="12" font-weight="600" fill="#ede9fe">Cost-sensitive Eval</text>
+<text x="287.5" y="294" text-anchor="middle" font-size="10" fill="#b9a6fb">missed-default / fraud loss</text>
+<text x="287.5" y="308" text-anchor="middle" font-size="10" fill="#b9a6fb">vs review cost</text>
+<line x1="370" y1="286.0" x2="382" y2="286.0" stroke="#8b5cf6" stroke-width="1.3" marker-end="url(#a-train)"/>
+<rect x="382" y="254" width="165" height="64" rx="6" fill="#2d1b78" stroke="#7c5cd6" stroke-width="0.9"/>
+<text x="464.5" y="277" text-anchor="middle" font-size="12" font-weight="600" fill="#ede9fe">Repeated CV</text>
+<text x="464.5" y="294" text-anchor="middle" font-size="10" fill="#b9a6fb">F1 at operating threshold</text>
+<text x="464.5" y="308" text-anchor="middle" font-size="10" fill="#b9a6fb">std ≈ 0.01 – 0.03</text>
+<line x1="547" y1="286.0" x2="559" y2="286.0" stroke="#8b5cf6" stroke-width="1.3" marker-end="url(#a-train)"/>
+<rect x="559" y="254" width="165" height="64" rx="6" fill="#2d1b78" stroke="#7c5cd6" stroke-width="0.9"/>
+<text x="641.5" y="277" text-anchor="middle" font-size="12" font-weight="600" fill="#ede9fe">MLflow Tracking</text>
+<text x="641.5" y="294" text-anchor="middle" font-size="10" fill="#b9a6fb">params · metrics · model</text>
+<text x="641.5" y="308" text-anchor="middle" font-size="10" fill="#b9a6fb">cloudpickle format</text>
+<line x1="724" y1="286.0" x2="736" y2="286.0" stroke="#8b5cf6" stroke-width="1.3" marker-end="url(#a-train)"/>
+<rect x="736" y="254" width="165" height="64" rx="6" fill="#2d1b78" stroke="#7c5cd6" stroke-width="0.9"/>
+<text x="818.5" y="277" text-anchor="middle" font-size="12" font-weight="600" fill="#ede9fe">Model Card JSON</text>
+<text x="818.5" y="294" text-anchor="middle" font-size="10" fill="#b9a6fb">thresholds · metrics · SHAP</text>
+<text x="818.5" y="308" text-anchor="middle" font-size="10" fill="#b9a6fb">tuned_on: calibration split</text>
+<line x1="901" y1="286.0" x2="913" y2="286.0" stroke="#8b5cf6" stroke-width="1.3" marker-end="url(#a-train)"/>
+<rect x="913" y="254" width="165" height="64" rx="6" fill="#2d1b78" stroke="#7c5cd6" stroke-width="0.9"/>
+<text x="995.5" y="277" text-anchor="middle" font-size="12" font-weight="600" fill="#ede9fe">Result (test split)</text>
+<text x="995.5" y="294" text-anchor="middle" font-size="10" fill="#b9a6fb">credit XGB · ROC-AUC 0.858</text>
+<text x="995.5" y="308" text-anchor="middle" font-size="10" fill="#b9a6fb">fraud XGB · ROC-AUC 0.955</text>
+<polyline points="995,242 995,248 110,248 110,253" fill="none" stroke="#8b5cf6" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#a-train)"/>
+<line x1="550" y1="330" x2="550" y2="342" stroke="#6b7280" stroke-width="1.3" marker-end="url(#a-gray)"/>
+<rect x="10" y="342" width="1080" height="102" rx="8" fill="#0a3a2c" opacity="0.95"/>
+<text x="18" y="358" font-size="10" font-weight="700" fill="#6ee7b7" letter-spacing="1.5">MODEL GOVERNANCE — CHAMPION / CHALLENGER (per engine)</text>
+<rect x="28" y="368" width="240" height="64" rx="6" fill="#0f5a43" stroke="#10b981" stroke-width="0.9"/>
+<text x="148.0" y="391" text-anchor="middle" font-size="12" font-weight="600" fill="#d1fae5">Challenger Model</text>
+<text x="148.0" y="408" text-anchor="middle" font-size="10" fill="#7fe3bd">newly trained pipeline</text>
+<text x="148.0" y="422" text-anchor="middle" font-size="10" fill="#7fe3bd">scored on the test split</text>
+<rect x="298" y="368" width="240" height="64" rx="6" fill="#0f5a43" stroke="#10b981" stroke-width="0.9"/>
+<text x="418.0" y="391" text-anchor="middle" font-size="12" font-weight="600" fill="#d1fae5">3-Gate Promotion</text>
+<text x="418.0" y="408" text-anchor="middle" font-size="10" fill="#7fe3bd">F1 gain ≥ 0.005 · gap ≤ 0.10</text>
+<text x="418.0" y="422" text-anchor="middle" font-size="10" fill="#7fe3bd">ROC-AUC floor: credit 0.80 · fraud 0.90</text>
+<rect x="568" y="368" width="240" height="64" rx="6" fill="#0f5a43" stroke="#10b981" stroke-width="0.9"/>
+<text x="688.0" y="391" text-anchor="middle" font-size="12" font-weight="600" fill="#d1fae5">Champion Registry</text>
+<text x="688.0" y="408" text-anchor="middle" font-size="10" fill="#7fe3bd">latest_model.json per engine</text>
+<text x="688.0" y="422" text-anchor="middle" font-size="10" fill="#7fe3bd">models/credit_risk · models/fraud</text>
+<rect x="838" y="368" width="240" height="64" rx="6" fill="#0f5a43" stroke="#10b981" stroke-width="0.9"/>
+<text x="958.0" y="391" text-anchor="middle" font-size="12" font-weight="600" fill="#d1fae5">challenger_log.json</text>
+<text x="958.0" y="408" text-anchor="middle" font-size="10" fill="#7fe3bd">PROMOTED / REJECTED + reason</text>
+<text x="958.0" y="422" text-anchor="middle" font-size="10" fill="#7fe3bd">written on every run</text>
+<line x1="268" y1="400.0" x2="298" y2="400.0" stroke="#10b981" stroke-width="1.3" marker-end="url(#a-gov)"/>
+<line x1="538" y1="400.0" x2="568" y2="400.0" stroke="#10b981" stroke-width="1.3" marker-end="url(#a-gov)"/>
+<text x="553" y="395.0" text-anchor="middle" font-size="9" font-weight="400" fill="#7fe3bd">pass</text>
+<line x1="550" y1="444" x2="550" y2="456" stroke="#6b7280" stroke-width="1.3" marker-end="url(#a-gray)"/>
+<rect x="10" y="456" width="1080" height="212" rx="8" fill="#4a2a05" opacity="0.95"/>
+<text x="18" y="472" font-size="10" font-weight="700" fill="#fbbf24" letter-spacing="1.5">SERVING — FASTAPI  POST /underwrite  →  make_final_decision()   (champion models loaded at startup)</text>
+<rect x="28" y="482" width="150" height="64" rx="6" fill="#5e3608" stroke="#f59e0b" stroke-width="0.9"/>
+<text x="103.0" y="505" text-anchor="middle" font-size="12" font-weight="600" fill="#fef3c7">POST /underwrite</text>
+<text x="103.0" y="522" text-anchor="middle" font-size="10" fill="#f3c26a">Pydantic-validated JSON</text>
+<text x="103.0" y="536" text-anchor="middle" font-size="10" fill="#f3c26a">+ optional document_id</text>
+<rect x="208" y="482" width="150" height="64" rx="6" fill="#5e3608" stroke="#f59e0b" stroke-width="0.9"/>
+<text x="283.0" y="505" text-anchor="middle" font-size="12" font-weight="600" fill="#fef3c7">Feature prep</text>
+<text x="283.0" y="522" text-anchor="middle" font-size="10" fill="#f3c26a">debt_ratio from real ₹ values</text>
+<text x="283.0" y="536" text-anchor="middle" font-size="10" fill="#f3c26a">₹ income ÷ 5.0 → model units</text>
+<rect x="388" y="482" width="150" height="64" rx="6" fill="#5e3608" stroke="#f59e0b" stroke-width="0.9"/>
+<text x="463.0" y="505" text-anchor="middle" font-size="12" font-weight="600" fill="#fef3c7">Fraud gate</text>
+<text x="463.0" y="522" text-anchor="middle" font-size="10" fill="#f3c26a">rule → model → review band</text>
+<text x="463.0" y="536" text-anchor="middle" font-size="10" fill="#f3c26a">BLOCK ⇒ final DECLINE</text>
+<rect x="568" y="482" width="150" height="64" rx="6" fill="#5e3608" stroke="#f59e0b" stroke-width="0.9"/>
+<text x="643.0" y="505" text-anchor="middle" font-size="12" font-weight="600" fill="#fef3c7">Credit engine</text>
+<text x="643.0" y="522" text-anchor="middle" font-size="10" fill="#f3c26a">rules → calibrated PD</text>
+<text x="643.0" y="536" text-anchor="middle" font-size="10" fill="#f3c26a">&lt;0.30 · 0.30–0.60 · ≥0.60</text>
+<rect x="748" y="482" width="150" height="64" rx="6" fill="#5e3608" stroke="#f59e0b" stroke-width="0.9"/>
+<text x="823.0" y="505" text-anchor="middle" font-size="12" font-weight="600" fill="#fef3c7">Document floor</text>
+<text x="823.0" y="522" text-anchor="middle" font-size="10" fill="#f3c26a">statement warnings or</text>
+<text x="823.0" y="536" text-anchor="middle" font-size="10" fill="#f3c26a">low confidence ⇒ REVIEW</text>
+<rect x="928" y="482" width="150" height="64" rx="6" fill="#5e3608" stroke="#f59e0b" stroke-width="0.9"/>
+<text x="1003.0" y="505" text-anchor="middle" font-size="12" font-weight="600" fill="#fef3c7">Confidence + Verdict</text>
+<text x="1003.0" y="522" text-anchor="middle" font-size="10" fill="#f3c26a">weights 0.55 / 0.30 / 0.15</text>
+<text x="1003.0" y="536" text-anchor="middle" font-size="10" fill="#f3c26a">APPROVE / REVIEW / DECLINE</text>
+<line x1="178" y1="514.0" x2="208" y2="514.0" stroke="#f59e0b" stroke-width="1.3" marker-end="url(#a-serve)"/>
+<text x="193" y="509.0" text-anchor="middle" font-size="9" font-weight="400" fill="#f3c26a">row</text>
+<line x1="358" y1="514.0" x2="388" y2="514.0" stroke="#f59e0b" stroke-width="1.3" marker-end="url(#a-serve)"/>
+<text x="373" y="509.0" text-anchor="middle" font-size="9" font-weight="400" fill="#f3c26a">flag</text>
+<line x1="538" y1="514.0" x2="568" y2="514.0" stroke="#f59e0b" stroke-width="1.3" marker-end="url(#a-serve)"/>
+<text x="553" y="509.0" text-anchor="middle" font-size="9" font-weight="400" fill="#f3c26a">PD</text>
+<line x1="718" y1="514.0" x2="748" y2="514.0" stroke="#f59e0b" stroke-width="1.3" marker-end="url(#a-serve)"/>
+<text x="733" y="509.0" text-anchor="middle" font-size="9" font-weight="400" fill="#f3c26a">docs</text>
+<line x1="898" y1="514.0" x2="928" y2="514.0" stroke="#f59e0b" stroke-width="1.3" marker-end="url(#a-serve)"/>
+<text x="913" y="509.0" text-anchor="middle" font-size="9" font-weight="400" fill="#f3c26a">score</text>
+<polyline points="463,546 463,564 973,564 973,547" fill="none" stroke="#fb7185" stroke-width="1.3" stroke-dasharray="5 3" marker-end="url(#a-red)"/>
+<text x="718.0" y="560" text-anchor="middle" font-size="9" font-weight="600" fill="#fda4af">fraud BLOCK short-circuits: credit is never consulted</text>
+<line x1="1033" y1="546" x2="1033" y2="573" stroke="#f59e0b" stroke-width="1.3" marker-end="url(#a-serve)"/>
+<text x="1039" y="564" text-anchor="start" font-size="9" font-weight="400" fill="#f3c26a">writes</text>
+<rect x="28" y="574" width="150" height="64" rx="6" fill="#5e3608" stroke="#f59e0b" stroke-width="0.9"/>
+<text x="103.0" y="597" text-anchor="middle" font-size="12" font-weight="600" fill="#fef3c7">Document upload</text>
+<text x="103.0" y="614" text-anchor="middle" font-size="10" fill="#f3c26a">POST /upload-document</text>
+<text x="103.0" y="628" text-anchor="middle" font-size="10" fill="#f3c26a">parse PDF → cache id</text>
+<rect x="208" y="574" width="150" height="64" rx="6" fill="#5e3608" stroke="#f59e0b" stroke-width="0.9"/>
+<text x="283.0" y="597" text-anchor="middle" font-size="12" font-weight="600" fill="#fef3c7">RAG Retrieval</text>
+<text x="283.0" y="614" text-anchor="middle" font-size="10" fill="#f3c26a">TF-IDF + stemmer</text>
+<text x="283.0" y="628" text-anchor="middle" font-size="10" fill="#f3c26a">structure-aware chunks</text>
+<rect x="388" y="574" width="150" height="64" rx="6" fill="#5e3608" stroke="#f59e0b" stroke-width="0.9"/>
+<text x="463.0" y="597" text-anchor="middle" font-size="12" font-weight="600" fill="#fef3c7">LLM Explainer</text>
+<text x="463.0" y="614" text-anchor="middle" font-size="10" fill="#f3c26a">POST /explain</text>
+<text x="463.0" y="628" text-anchor="middle" font-size="10" fill="#f3c26a">Gemini REST or template</text>
+<rect x="568" y="574" width="150" height="64" rx="6" fill="#5e3608" stroke="#f59e0b" stroke-width="0.9"/>
+<text x="643.0" y="597" text-anchor="middle" font-size="12" font-weight="600" fill="#fef3c7">Letter PDF</text>
+<text x="643.0" y="614" text-anchor="middle" font-size="10" fill="#f3c26a">GET /application/{id}/letter</text>
+<text x="643.0" y="628" text-anchor="middle" font-size="10" fill="#f3c26a">reportlab · EN / Hindi</text>
+<rect x="748" y="574" width="150" height="64" rx="6" fill="#5e3608" stroke="#f59e0b" stroke-width="0.9"/>
+<text x="823.0" y="597" text-anchor="middle" font-size="12" font-weight="600" fill="#fef3c7">Chatbot</text>
+<text x="823.0" y="614" text-anchor="middle" font-size="10" fill="#f3c26a">POST /chat · 5-turn memory</text>
+<text x="823.0" y="628" text-anchor="middle" font-size="10" fill="#f3c26a">Gemini tools or offline rules</text>
+<rect x="928" y="574" width="150" height="64" rx="6" fill="#5e3608" stroke="#f59e0b" stroke-width="0.9"/>
+<text x="1003.0" y="597" text-anchor="middle" font-size="12" font-weight="600" fill="#fef3c7">Audit Trail JSON</text>
+<text x="1003.0" y="614" text-anchor="middle" font-size="10" fill="#f3c26a">logs/audit_trail/{id}.json</text>
+<text x="1003.0" y="628" text-anchor="middle" font-size="10" fill="#f3c26a">inputs · verdict · explanation</text>
+<line x1="358" y1="606.0" x2="388" y2="606.0" stroke="#f59e0b" stroke-width="1.3" marker-end="url(#a-serve)"/>
+<text x="373" y="601.0" text-anchor="middle" font-size="9" font-weight="400" fill="#f3c26a">ctx</text>
+<polyline points="1003,638 1003,652 463,652" fill="none" stroke="#f59e0b" stroke-width="1.2"/>
+<line x1="463" y1="652" x2="463" y2="639" stroke="#f59e0b" stroke-width="1.3" marker-end="url(#a-serve)"/>
+<line x1="643" y1="652" x2="643" y2="639" stroke="#f59e0b" stroke-width="1.3" marker-end="url(#a-serve)"/>
+<line x1="823" y1="652" x2="823" y2="639" stroke="#f59e0b" stroke-width="1.3" marker-end="url(#a-serve)"/>
+<text x="733.0" y="663" text-anchor="middle" font-size="9" font-weight="400" fill="#f3c26a">load_audit_trail(application_id) — explain, letter and chat all read the saved decision</text>
+<rect x="10" y="704" width="1080" height="102" rx="8" fill="#3a0b0b" opacity="0.95"/>
+<text x="18" y="720" font-size="10" font-weight="700" fill="#fca5a5" letter-spacing="1.5">CLIENTS &amp; MONITORING</text>
+<rect x="28" y="730" width="188" height="64" rx="6" fill="#5c0f0f" stroke="#ef4444" stroke-width="0.9"/>
+<text x="122.0" y="753" text-anchor="middle" font-size="12" font-weight="600" fill="#fee2e2">Streamlit Portal</text>
+<text x="122.0" y="770" text-anchor="middle" font-size="10" fill="#f6a1a1">form · tracker · decision</text>
+<text x="122.0" y="784" text-anchor="middle" font-size="10" fill="#f6a1a1">EN / Hindi · letter · chat popover</text>
+<rect x="244" y="730" width="188" height="64" rx="6" fill="#5c0f0f" stroke="#ef4444" stroke-width="0.9"/>
+<text x="338.0" y="753" text-anchor="middle" font-size="12" font-weight="600" fill="#fee2e2">Data Simulator</text>
+<text x="338.0" y="770" text-anchor="middle" font-size="10" fill="#f6a1a1">safe · risky · random</text>
+<text x="338.0" y="784" text-anchor="middle" font-size="10" fill="#f6a1a1">traffic for demos &amp; load checks</text>
+<rect x="460" y="730" width="188" height="64" rx="6" fill="#5c0f0f" stroke="#ef4444" stroke-width="0.9"/>
+<text x="554.0" y="753" text-anchor="middle" font-size="12" font-weight="600" fill="#fee2e2">Monitor Files</text>
+<text x="554.0" y="770" text-anchor="middle" font-size="10" fill="#f6a1a1">monitor_scores.csv per engine</text>
+<text x="554.0" y="784" text-anchor="middle" font-size="10" fill="#f6a1a1">feature_drift_report.csv (PSI)</text>
+<rect x="676" y="730" width="188" height="64" rx="6" fill="#5c0f0f" stroke="#ef4444" stroke-width="0.9"/>
+<text x="770.0" y="753" text-anchor="middle" font-size="12" font-weight="600" fill="#fee2e2">Monitoring Dashboard</text>
+<text x="770.0" y="770" text-anchor="middle" font-size="10" fill="#f6a1a1">alerts · champion vs challenger</text>
+<text x="770.0" y="784" text-anchor="middle" font-size="10" fill="#f6a1a1">KPIs · PSI drift · recent apps</text>
+<rect x="892" y="730" width="188" height="64" rx="6" fill="#5c0f0f" stroke="#ef4444" stroke-width="0.9"/>
+<text x="986.0" y="753" text-anchor="middle" font-size="12" font-weight="600" fill="#fee2e2">CI/CD + Deploy</text>
+<text x="986.0" y="770" text-anchor="middle" font-size="10" fill="#f6a1a1">Actions: ingest → pytest → smoke</text>
+<text x="986.0" y="784" text-anchor="middle" font-size="10" fill="#f6a1a1">Docker · compose · Render</text>
+<line x1="648" y1="762.0" x2="676" y2="762.0" stroke="#ef4444" stroke-width="1.3" marker-end="url(#a-mon)"/>
+<text x="662" y="757.0" text-anchor="middle" font-size="9" font-weight="400" fill="#f6a1a1">read</text>
+<line x1="122" y1="704" x2="122" y2="670" stroke="#f59e0b" stroke-width="1.4" marker-end="url(#a-serve)"/>
+<line x1="338" y1="704" x2="338" y2="670" stroke="#f59e0b" stroke-width="1.4" marker-end="url(#a-serve)"/>
+<text x="130" y="692" text-anchor="start" font-size="9" font-weight="600" fill="#a16207">HTTP</text>
+<text x="346" y="692" text-anchor="start" font-size="9" font-weight="600" fill="#a16207">HTTP</text>
+<text x="230.0" y="692" text-anchor="middle" font-size="9" font-weight="400" fill="#a16207"></text>
+<rect x="28" y="822" width="222" height="26" rx="5" fill="#0d1b4b" stroke="#4a7fd4" stroke-width="0.9"/>
+<text x="139.0" y="839" text-anchor="middle" font-size="10.5" fill="#e8f0fe">pytest: 240 passed ✓</text>
+<rect x="262" y="822" width="262" height="26" rx="5" fill="#1a0f45" stroke="#7c5cd6" stroke-width="0.9"/>
+<text x="393.0" y="839" text-anchor="middle" font-size="10.5" fill="#ede9fe">Credit: XGBoost · ROC-AUC 0.858 · PR-AUC 0.364</text>
+<rect x="536" y="822" width="262" height="26" rx="5" fill="#0a3a2c" stroke="#10b981" stroke-width="0.9"/>
+<text x="667.0" y="839" text-anchor="middle" font-size="10.5" fill="#d1fae5">Fraud: XGBoost · ROC-AUC 0.955 · PR-AUC 0.759</text>
+<rect x="810" y="822" width="262" height="26" rx="5" fill="#4a2a05" stroke="#f59e0b" stroke-width="0.9"/>
+<text x="941.0" y="839" text-anchor="middle" font-size="10.5" fill="#fef3c7">RAG: TF-IDF · no LangChain / ChromaDB</text>
+</svg>

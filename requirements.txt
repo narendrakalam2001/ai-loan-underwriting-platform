@@ -1,0 +1,48 @@
+# ============================================================
+# DAY 1 + DAY 2 REQUIREMENTS
+# Full requirements for development + CI.
+# Module 5 (RAG / LLM / chatbot) deliberately adds NO heavy dependency:
+# retrieval = scikit-learn TF-IDF, LLM = Gemini REST via `requests`.
+# DO NOT add langchain or chromadb — both pin numpy<2, which breaks the
+# fraud model's pickled RandomState (this project needs numpy>=2).
+# ============================================================
+
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+faker
+reportlab
+pymupdf
+spacy
+jupyter
+ipykernel
+nbformat
+nbconvert
+
+# Day 2 — modeling
+xgboost
+lightgbm
+catboost
+imbalanced-learn
+shap
+mlflow
+joblib
+
+# Day 3 — serving + frontend
+fastapi
+uvicorn[standard]
+python-multipart
+streamlit>=1.31        # st.popover (floating chat) needs >= 1.31
+requests
+
+# Testing / CI
+pytest
+pytest-cov
+httpx                  # required by fastapi.testclient
+
+# Optional — only needed if you want the spaCy NER employer
+# cross-check to actually run (parser degrades gracefully
+# without it):
+#   python -m spacy download en_core_web_sm

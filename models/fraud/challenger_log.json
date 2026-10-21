@@ -1,0 +1,12 @@
+[
+  {
+    "decision": "PROMOTED",
+    "reason": "No existing champion \u2014 first model auto-promoted",
+    "challenger_name": "XGBoost",
+    "challenger_f1": 0.8023,
+    "challenger_roc_auc": 0.9551,
+    "champion_name": null,
+    "champion_f1": null,
+    "evaluated_at": "2026-10-15 12:19:39"
+  }
+]

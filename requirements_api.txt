@@ -1,0 +1,40 @@
+# ============================================================
+# REQUIREMENTS — API deployment only (Render / Docker)
+# Stripped of training-only deps (shap, mlflow, jupyter, lightgbm,
+# catboost, spacy, faker) to keep the build fast and RAM low on the
+# free tier. Verified: the full test-suite passes with shap / mlflow /
+# lightgbm / catboost made unimportable, and spaCy is optional
+# (the parser falls back to regex without it).
+#
+# Saved model files are pickles: the versions below MUST match the
+# environment the champion was trained in. Print yours with
+#     python scripts/print_pins.py
+# and paste any differences here (esp. xgboost / imbalanced-learn).
+#
+# If a future champion is LightGBM or CatBoost, add that package back.
+# ============================================================
+
+fastapi
+uvicorn[standard]
+python-multipart
+
+# --- must match the training environment (models are pickled) ---
+numpy==1.26.4
+pandas==2.2.2
+scikit-learn==1.5.0
+scipy==1.15.3
+imbalanced-learn==0.14.2
+xgboost==3.2.0
+joblib==1.6.0
+
+requests
+
+# Module 3 — document parsing (/upload-document)
+pymupdf
+# Module 5C — decision-letter PDF
+reportlab
+
+# Module 5 (chat / explain / letter endpoints) needs nothing beyond the
+# packages above: scikit-learn + joblib (TF-IDF knowledge base), requests
+# (Gemini REST), reportlab (decision-letter PDF), pymupdf (optional PDF KB docs).
+# No langchain / chromadb on purpose — they pin numpy<2.

@@ -1,0 +1,35 @@
+{
+  "application_id": "SYN00005",
+  "account_holder": "Yash Gade",
+  "employer": "Raghavan-Madan",
+  "account_number": "83503056413",
+  "bank_name": "Bharat Trust Bank",
+  "monthly_income": [
+    102421.73,
+    101046.29,
+    102826.93,
+    109113.82,
+    99782.96,
+    115560.07
+  ],
+  "avg_monthly_income": 105125.3,
+  "income_stability": "Good",
+  "monthly_emi_total": 0,
+  "month_end_balances": [
+    85074.86,
+    106122.76,
+    169907.24,
+    183907.02,
+    197243.53,
+    191490.58
+  ],
+  "balance_stability": "Moderate",
+  "statement_months": [
+    "Apr-2026",
+    "May-2026",
+    "Jun-2026",
+    "Jul-2026",
+    "Aug-2026",
+    "Sep-2026"
+  ]
+}

@@ -1,0 +1,49 @@
+SYNTHETIC CIBIL SCORE INTERPRETATION GUIDE (ILLUSTRATIVE)
+
+This is a synthetic internal reference document for underwriting staff,
+written for a capstone project demo. It summarizes widely known, public
+knowledge about how CIBIL-style credit scores are generally interpreted
+by Indian lenders. It is not an official TransUnion CIBIL publication.
+
+SCORE BANDS
+
+300-549 (Poor): Indicates a history of missed payments, defaults, or
+very limited credit history combined with risk flags. Applications in
+this band are typically declined or require substantial compensating
+factors (large down payment, strong co-applicant, secured collateral).
+
+550-649 (Fair): Below-average repayment history. Loans may be approved
+at a higher interest rate to compensate for elevated risk, or routed to
+manual underwriting for a closer look at the applicant's recent (last
+6-12 months) payment behavior rather than their full history.
+
+650-749 (Good): Generally reliable repayment history with occasional,
+minor delays. Most lenders will approve standard loan products at
+standard rates for applicants in this band, subject to income and
+debt-to-income checks.
+
+750-900 (Excellent): Strong, consistent repayment history. Applicants in
+this band typically qualify for the lowest interest rates a lender
+offers and the highest loan amounts relative to income.
+
+NO SCORE / THIN FILE
+
+An applicant with no CIBIL score (because they have never taken formal
+credit) is NOT the same as an applicant with a poor score. A "thin file"
+simply means there isn't enough credit bureau history to compute a score.
+For first-time borrowers, this platform's Document Intelligence module
+(bank statement analysis) and Fraud Detection checks are used as
+supplementary signals, consistent with the fair-treatment principle in
+the lending guidelines document in this knowledge base.
+
+HOW THIS PLATFORM'S CREDIT ENGINE RELATES TO CIBIL BANDS
+
+This platform's Module 1 (credit_engine.py) does not consume a raw CIBIL
+score directly — the underlying training dataset (Kaggle's "Give Me Some
+Credit") instead uses payment-history-derived features (times 30-59/60-89/
+90+ days late, revolving credit utilization, debt ratio) that are
+conceptually similar to what feeds into a real CIBIL score calculation,
+and produces its own LOW/MEDIUM/HIGH risk band and a calibrated default
+probability. The two scoring systems are directionally comparable but
+numerically distinct — a real deployment would typically use both the
+model's own score AND a bureau-pulled CIBIL score as independent checks.

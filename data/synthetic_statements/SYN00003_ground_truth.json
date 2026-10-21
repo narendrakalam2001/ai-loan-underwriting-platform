@@ -1,0 +1,35 @@
+{
+  "application_id": "SYN00003",
+  "account_holder": "Gunbir Parmer",
+  "employer": "Lalla-Bassi",
+  "account_number": "78161849593",
+  "bank_name": "Vaayu Digital Bank",
+  "monthly_income": [
+    78825.76,
+    76620.63,
+    83248.45,
+    79493.69,
+    84179.06,
+    79989.82
+  ],
+  "avg_monthly_income": 80392.9,
+  "income_stability": "Good",
+  "monthly_emi_total": 0,
+  "month_end_balances": [
+    55325.04,
+    91276.19,
+    113695.06,
+    137526.84,
+    169539.21,
+    189441.41
+  ],
+  "balance_stability": "Moderate",
+  "statement_months": [
+    "Apr-2026",
+    "May-2026",
+    "Jun-2026",
+    "Jul-2026",
+    "Aug-2026",
+    "Sep-2026"
+  ]
+}

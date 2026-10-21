@@ -1,0 +1,104 @@
+{
+  "model_version": "v1",
+  "model_name": "XGBoost",
+  "trained_at": "2026-10-15 12:19:38",
+  "project": "fraud",
+  "dataset": {
+    "train_fit_size": 181584,
+    "calibration_size": 45396,
+    "test_size": 56746,
+    "positive_rate_train": 0.001663
+  },
+  "metrics": {
+    "test_f1": 0.8023,
+    "test_precision": 0.8659,
+    "test_recall": 0.7474,
+    "roc_auc": 0.9551,
+    "ks_statistic": 0.8192,
+    "recall_at_5pct": 0.8421,
+    "lift_at_5pct": 503.0113,
+    "brier_score": 0.0006
+  },
+  "thresholds": {
+    "uncalibrated": 0.6764,
+    "calibrated": 0.5,
+    "active": 0.5,
+    "tuned_on": "held-out calibration split (not the test set)"
+  },
+  "decisions": {
+    "APPROVE": 56645,
+    "BLOCK_MODEL": 82,
+    "BLOCK_RULE": 13,
+    "REVIEW": 6
+  },
+  "cost_evaluation": {
+    "false_negative_count": 24,
+    "false_positive_count": 11,
+    "estimated_fn_loss": 4850.29,
+    "review_cost": 165.0,
+    "total_estimated_loss": 5015.29
+  },
+  "pipeline_config": {
+    "feature_order": [
+      "V1",
+      "V2",
+      "V3",
+      "V6",
+      "V8",
+      "V10",
+      "V12",
+      "V14",
+      "V16",
+      "V17",
+      "V21",
+      "V23",
+      "V27",
+      "V28",
+      "Amount",
+      "Amount_original",
+      "Time",
+      "V4",
+      "V5",
+      "V7",
+      "V9",
+      "V11",
+      "V13",
+      "V15",
+      "V18",
+      "V19",
+      "V20",
+      "V22",
+      "V24",
+      "V25",
+      "V26",
+      "hour_of_day",
+      "amount_log"
+    ],
+    "categorical_indices": [],
+    "selector_k": 10
+  },
+  "feature_importances": {
+    "V14": 0.3160202205181122,
+    "V10": 0.28289157152175903,
+    "V17": 0.21454793214797974,
+    "V4": 0.05519174784421921,
+    "V12": 0.05213293805718422,
+    "V3": 0.01756482571363449,
+    "V16": 0.016392389312386513,
+    "V11": 0.015420529991388321,
+    "V7": 0.015317532233893871,
+    "V9": 0.014520322903990746
+  },
+  "shap_top_features": {
+    "V4": 1.8700388669967651,
+    "V14": 1.750929594039917,
+    "V12": 1.167778730392456,
+    "V10": 1.117271900177002,
+    "V3": 0.9824202656745911,
+    "V11": 0.9727184176445007,
+    "V9": 0.5946727991104126,
+    "V16": 0.5042406320571899,
+    "V7": 0.46764931082725525,
+    "V17": 0.3985779583454132
+  }
+}

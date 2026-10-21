@@ -1,0 +1,83 @@
+# ============================================================
+# DOCKER COMPOSE — AI Loan Underwriting Platform
+# ============================================================
+# Local development: runs the API, the ops dashboard, and the
+# user-facing portal together on one Docker network.
+#
+# Usage:
+#   docker compose up --build          ← start everything
+#   docker compose up api              ← API only
+#   docker compose up dashboard        ← ops dashboard only
+#   docker compose up portal           ← user portal only
+#   docker compose down                ← stop everything
+# ============================================================
+
+version: "3.9"
+
+services:
+
+  # ── FastAPI Underwriting API ────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: underwriting_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models       # persist trained models
+      - ./logs:/app/logs           # persist audit trail + prediction logs
+      # Only the document cache is mounted. Mounting all of ./data would HIDE the
+      # knowledge-base index that the Dockerfile builds into /app/data/knowledge_base.
+      - ./data/document_cache:/app/data/document_cache
+    environment:
+      - PYTHONUNBUFFERED=1
+      # Optional (Module 5). Empty / unset = offline template + rules fallbacks.
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash}
+      - HINDI_FONT_PATH=${HINDI_FONT_PATH:-}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import requests; requests.get('http://localhost:8000/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ── Streamlit Ops Monitoring Dashboard (internal staff view) ─
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    container_name: underwriting_dashboard
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./models:/app/models
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── Streamlit User Portal (loan application front-end) ───────
+  portal:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    container_name: underwriting_portal
+    command: ["streamlit", "run", "frontend/app.py",
+              "--server.port=8502", "--server.address=0.0.0.0", "--server.headless=true"]
+    ports:
+      - "8502:8502"
+    environment:
+      - UNDERWRITING_API_URL=http://api:8000   # internal Docker network
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
