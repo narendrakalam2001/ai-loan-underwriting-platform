@@ -1,0 +1,9 @@
+# Force the light theme everywhere (local, Render, Streamlit Community Cloud).
+# The portal / dashboard CSS is written for a light background; without this,
+# Streamlit follows the viewer's OS/browser dark mode and dark text vanishes.
+[theme]
+base = "light"
+primaryColor = "#FF4B4B"
+
+[server]
+headless = true
