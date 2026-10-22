@@ -87,7 +87,7 @@ Both champions were selected by **PR-AUC** (threshold-free, the right metric for
 |---|---|
 | 🚀 **FastAPI (Swagger UI)** | [https://ai-loan-underwriting-platform.onrender.com/docs](https://ai-loan-underwriting-platform.onrender.com/docs) |
 | 🧾 **User Portal (Streamlit)** | [https://ai-loan-underwriting-platform.streamlit.app](https://ai-loan-underwriting-platform.streamlit.app) |
-| 📊 **Ops Dashboard (Streamlit)** | [https://STREAMLIT-DASHBOARD-URL.streamlit.app](https://STREAMLIT-DASHBOARD-URL.streamlit.app) |
+| 📊 **Ops Dashboard (Streamlit)** | [https://ai-loan-underwriting-platform-dashboard.streamlit.app](https://ai-loan-underwriting-platform-dashboard.streamlit.app) |
 | 📓 **EDA Notebooks** | [credit](notebooks/credit_risk_eda.ipynb) · [fraud](notebooks/fraud_eda.ipynb) · [unified analysis](notebooks/unified_risk_analysis.ipynb) |
 
 > ⚠️ Render free tier: the API sleeps when idle — the first request may take 30–60 seconds (cold start). Open `/health` once before using the portal.  
