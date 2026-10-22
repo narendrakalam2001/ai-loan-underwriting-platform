@@ -453,12 +453,17 @@ def explain_single_prediction(selected_pipe, X_train, x_row: pd.DataFrame, top_k
     applicant/transaction row — used by decision_engine.py to build the
     "Approved/Declined because ..." explanation shown in the User Portal.
     """
-    if not SHAP_AVAILABLE:
-        return []
-
     clf = _unwrap_classifier(selected_pipe.named_steps["classifier"])
     pre = selected_pipe.named_steps["preprocessor"]
     sel = selected_pipe.named_steps.get("selector", None)
+
+    # XGBoost is explained with its own native contributions (pred_contribs):
+    # exact tree-SHAP values in log-odds. This needs no `shap` package, so the lean
+    # production install (requirements_api.txt) still gets explanations, and it
+    # sidesteps the shap<->xgboost base_score parsing bug. Other tree models still
+    # need `shap`; without it they return no drivers.
+    if not SHAP_AVAILABLE and type(clf).__name__ != "XGBClassifier":
+        return []
 
     try:
         X_pre = pre.transform(x_row)
@@ -469,7 +474,11 @@ def explain_single_prediction(selected_pipe, X_train, x_row: pd.DataFrame, top_k
                       "GradientBoostingClassifier", "XGBClassifier",
                       "LGBMClassifier", "CatBoostClassifier")
 
-        if type(clf).__name__ in tree_types:
+        if type(clf).__name__ == "XGBClassifier":
+            import xgboost
+            contribs = clf.get_booster().predict(xgboost.DMatrix(X_in), pred_contribs=True)
+            vals = contribs[:, :-1]          # last column is the bias term
+        elif type(clf).__name__ in tree_types:
             try:
                 explainer = shap.TreeExplainer(clf)
                 vals = np.array(explainer.shap_values(X_in))

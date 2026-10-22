@@ -5,7 +5,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-Serving-009688.svg)](https://fastapi.tiangolo.com)
 [![Streamlit](https://img.shields.io/badge/Streamlit-Portal%20%2B%20Dashboard-FF4B4B.svg)](https://streamlit.io)
 [![XGBoost](https://img.shields.io/badge/Champion-XGBoost-brightgreen.svg)](https://xgboost.readthedocs.io)
-[![Tests](https://img.shields.io/badge/tests-240%20passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-242%20passing-brightgreen.svg)](tests/)
 [![MLflow](https://img.shields.io/badge/MLflow-Tracked-orange.svg)](https://mlflow.org)
 [![Gemini](https://img.shields.io/badge/LLM-Gemini%20(optional)-8E75B2.svg)](https://ai.google.dev)
 [![Docker](https://img.shields.io/badge/Docker-Ready%20(unbuilt)-2496ED.svg)](Dockerfile)
@@ -81,29 +81,87 @@ Both champions were selected by **PR-AUC** (threshold-free, the right metric for
 
 ---
 
+## 🔗 Live Links
+
+| Service | URL |
+|---|---|
+| 🚀 **FastAPI (Swagger UI)** | [https://ai-loan-underwriting-platform.onrender.com/docs](https://ai-loan-underwriting-platform.onrender.com/docs) |
+| 🧾 **User Portal (Streamlit)** | [https://ai-loan-underwriting-platform.streamlit.app](https://ai-loan-underwriting-platform.streamlit.app) |
+| 📊 **Ops Dashboard (Streamlit)** | [https://STREAMLIT-DASHBOARD-URL.streamlit.app](https://STREAMLIT-DASHBOARD-URL.streamlit.app) |
+| 📓 **EDA Notebooks** | [credit](notebooks/credit_risk_eda.ipynb) · [fraud](notebooks/fraud_eda.ipynb) · [unified analysis](notebooks/unified_risk_analysis.ipynb) |
+
+> ⚠️ Render free tier: the API sleeps when idle — the first request may take 30–60 seconds (cold start). Open `/health` once before using the portal.  
+> ⚠️ Free-tier disk is ephemeral: the audit trail resets when the API restarts, and the Streamlit dashboard shows the model/monitoring files committed to the repo (it cannot see the live API's audit trail).
+
+---
+
 ## 🏗️ System Architecture
 
 ![System Architecture](docs/architecture/ai_loan_architecture.svg)
 
 ```
- User Portal (Streamlit)  frontend/app.py                 Ops Dashboard  monitoring/dashboard.py
-   form · processing · decision (EN/हिन्दी, letter) · tracker · floating chat
-        │
-        ▼
- ┌──────────────────────────────── FastAPI — serving/api.py ───────────────────────────────┐
- │ POST /underwrite   POST /upload-document   GET /application/{id}                         │
- │ POST /chat         POST /explain           GET /application/{id}/letter?language=en|hi   │
- └───────┬──────────────────┬───────────────────────┬───────────────────────────────────────┘
-         ▼                  ▼                       ▼
-   Module 1 Credit     Module 2 Fraud         Module 3 Documents
-         └──────────────────┴───────────────────────┘
-                            ▼
-                 Module 4 Decision Engine ──► logs/audit_trail/<APP id>.json
-                            │                  (verdict, explanation, SHAP drivers,
-                            │                   + minimal `application` summary)
-                            ▼
-   Module 5   rag_engine (TF-IDF) · llm_explainer (Gemini REST | template)
-              doc_generator (reportlab PDF) · chatbot (Gemini tools | rules) · loan_math
+╔══════════════════════════════════════════════════════════════════════════════════╗
+║             AI LOAN UNDERWRITING PLATFORM — 6-LAYER PRODUCTION SYSTEM            ║
+╠══════════════════════════════════════════════════════════════════════════════════╣
+║                                                                                  ║
+║  ┌──────────────────────────────── DATA LAYER ────────────────────────────────┐  ║
+║  │  Give Me Some Credit · Credit Card Fraud · PDF bank statements             │  ║
+║  │  Validate → Clean (96/98 codes · DebtRatio fix) → Leakage check            │  ║
+║  │  3-way stratified split: train_fit 64% · calibration 16% · test 20%        │  ║
+║  └────────────────────────────────────────────────────────────────────────────┘  ║
+║                                        ▼                                         ║
+║  ┌────────────── TRAINING PIPELINE  (shared by credit + fraud) ───────────────┐  ║
+║  │  SMOTE + SelectKBest(k=10) → RandomizedSearchCV · up to 14 families        │  ║
+║  │  LR·KNN·SGD·NB·Tree·RF·ET·GB·Ada·XGB·LGBM·Cat·MLP (per-model fail-safe)    │  ║
+║  │  Select by PR-AUC → threshold on calibration split → isotonic calibration  │  ║
+║  │  SHAP (native XGB contribs fallback) · MLflow · JSON model card            │  ║
+║  │                                                                            │  ║
+║  │  CREDIT  → XGBoost  ROC-AUC 0.8579  PR-AUC 0.3636  KS 0.5743               │  ║
+║  │  FRAUD   → XGBoost  ROC-AUC 0.9551  PR-AUC 0.7590  KS 0.8192               │  ║
+║  └────────────────────────────────────────────────────────────────────────────┘  ║
+║                                        ▼                                         ║
+║  ┌────────────────────────── CHAMPION – CHALLENGER ───────────────────────────┐  ║
+║  │  Gate 1: F1 improvement >= 0.005                          PASS / FAIL      │  ║
+║  │  Gate 2: ROC-AUC floor  credit >= 0.80 · fraud >= 0.90    PASS / FAIL      │  ║
+║  │  Gate 3: train–test gap  <= 0.10                          PASS / FAIL      │  ║
+║  │                                                                            │  ║
+║  │  ALL gates pass → PROMOTED (latest_model.json updated)                     │  ║
+║  │  ANY gate fails → REJECTED (champion retained, run logged)                 │  ║
+║  └────────────────────────────────────────────────────────────────────────────┘  ║
+║                                        ▼                                         ║
+║  ┌───────────────── SERVING LAYER — FastAPI (serving/api.py) ─────────────────┐  ║
+║  │  POST /underwrite       applicant (+ document_id) → decision + audit       │  ║
+║  │  POST /upload-document  bank-statement PDF → income · EMIs · stability     │  ║
+║  │  GET  /application/{id} audit trail · GET /health · GET /model-info        │  ║
+║  │                                                                            │  ║
+║  │  Module 1 Credit ─┐                                                        │  ║
+║  │  Module 2 Fraud  ─┼─▶Module 4 DECISION ENGINE ─▶audit_trail/<APP id>.json │  ║
+║  │  Module 3 Docs   ─┘                                                        │  ║
+║  │                                                                            │  ║
+║  │  1. Fraud BLOCK → DECLINE (credit never consulted) · REVIEW → capped       │  ║
+║  │  2. Document warnings / low confidence → floor at MANUAL_REVIEW            │  ║
+║  │  3. Credit: hard rules first, then calibrated-probability bands            │  ║
+║  │  4. Confidence = 0.55 credit + 0.30 fraud + 0.15 document quality          │  ║
+║  └────────────────────────────────────────────────────────────────────────────┘  ║
+║                                        ▼                                         ║
+║  ┌──────────────── MODULE 5 — POLICY INTELLIGENCE & ASSISTANT ────────────────┐  ║
+║  │  POST /explain · GET /application/id/letter · POST /chat                   │  ║
+║  │                                                                            │  ║
+║  │  rag_engine      TF-IDF over 4 policy documents (86 chunks)                │  ║
+║  │  llm_explainer   Gemini REST (optional)  |  EN / HI template fallback      │  ║
+║  │  doc_generator   decision-letter PDF · every number from loan_math.py      │  ║
+║  │  chatbot         tools: eligibility · EMI · status · FAQ | rules fallback  │  ║
+║  │                                                                            │  ║
+║  │  Guardrails: the LLM never decides and never invents numbers               │  ║
+║  └────────────────────────────────────────────────────────────────────────────┘  ║
+║                                        ▼                                         ║
+║  ┌──────────────────── FRONTENDS & MONITORING — Streamlit ────────────────────┐  ║
+║  │  User Portal    apply · processing · decision (EN/HI + letter) · chat      │  ║
+║  │  Ops Dashboard  1 Alerts · 2 Champion–Challenger · 3 KPIs                  │  ║
+║  │                 4 PSI drift · 5 Recent applications (credit + fraud)       │  ║
+║  │  Simulator      3 scenarios (safe · risky · random) → /underwrite          │  ║
+║  └────────────────────────────────────────────────────────────────────────────┘  ║
+╚══════════════════════════════════════════════════════════════════════════════════╝
 ```
 
 ### Decision hierarchy (Module 4)
@@ -151,7 +209,7 @@ Look up any past application by ID — same explanation and the decision-letter 
 |---|---|
 | ![Credit Drift](docs/screenshots/credit_risk_feature_drift_report.png) | ![Credit Recent](docs/screenshots/credit_risk_recent_applications.png) |
 
-**SHAP — global feature importance (credit)**
+**SHAP — full explanation of one application (credit)**
 
 ![Credit SHAP](docs/screenshots/credit_risk_view_full%20_shap.png)
 
@@ -167,7 +225,7 @@ Look up any past application by ID — same explanation and the decision-letter 
 |---|---|
 | ![Fraud Drift](docs/screenshots/fraud_feature_drift_report.png) | ![Fraud Recent](docs/screenshots/fraud_recent_applications.png) |
 
-**SHAP — global feature importance (fraud)**
+**SHAP — full explanation of one application (fraud)**
 
 ![Fraud SHAP](docs/screenshots/fraud_view_full_shap.png)
 
@@ -237,7 +295,7 @@ Tools: `eligibility_checker` (indicative, mirrors the hard rules), `emi_calculat
 4. **Tracker** — look up any application by ID; same explanation + letter download
 5. **Floating "💬 Loan Assistant"** (bottom-right on every screen, `st.popover`) → `POST /chat`
 
-Needs `streamlit>=1.31`. The pinned-button CSS targets Streamlit's `data-testid` attributes (`stPopover`, `stPopoverButton`), verified on Streamlit 1.65; on other versions the chat still works but may not be pinned to the corner.
+The whole portal UI (labels, buttons, steps, decision screen, chat) switches between English and हिन्दी with the language radio; explanations, letters and chat replies come from the API in the same language, while the improvement suggestions stay in English. Needs `streamlit>=1.31`. The pinned-button CSS targets Streamlit's `data-testid` attributes (`stPopover`, `stPopoverButton`), verified on Streamlit 1.65; on other versions the chat still works but may not be pinned to the corner.
 
 ---
 
@@ -274,10 +332,12 @@ ai-loan-underwriting-platform/
 │   └── prediction_service.py               # Feature prep · ₹→model-unit income scaling · scoring bridge
 │
 ├── frontend/
-│   └── app.py                              # Streamlit user portal
+│   ├── app.py                              # Streamlit user portal
+│   └── requirements.txt                    # Lean deps for Streamlit Community Cloud
 │
 ├── monitoring/
-│   └── dashboard.py                        # Streamlit ops dashboard (5 sections × 2 engines)
+│   ├── dashboard.py                        # Streamlit ops dashboard (5 sections × 2 engines)
+│   └── requirements.txt                    # Lean deps for Streamlit Community Cloud
 │
 ├── simulation/
 │   └── data_simulator.py                   # safe · risky · random applicant traffic
@@ -287,7 +347,11 @@ ai-loan-underwriting-platform/
 │   ├── ingest_knowledge_base.py            # Build the RAG index
 │   ├── inspect_credit_data.py              # Read-only diagnostic for the real GMSC file
 │   ├── generate_synthetic_docs.py          # Synthetic bank statements
-│   ├── run_api.py · run_dashboard.py · run_simulation.py
+│   ├── run_api.py                          # python scripts/run_api.py
+│   ├── run_dashboard.py                    # python scripts/run_dashboard.py [--portal]
+│   ├── run_simulation.py                   # python scripts/run_simulation.py --scenario safe|risky|random|all --n 30
+│   ├── check_repo_size.py                  # Pre-push check: files too big for GitHub
+│   └── print_pins.py                       # Print library versions to pin in requirements_api.txt
 │
 ├── notebooks/
 │   ├── credit_risk_eda.ipynb               # Credit-risk exploratory analysis
@@ -300,26 +364,55 @@ ai-loan-underwriting-platform/
 ├── data/
 │   ├── raw/                                # Stand-in CSVs (NOT the real datasets — see Limitations)
 │   ├── synthetic_statements/               # Synthetic bank-statement PDFs + ground truth
-│   ├── knowledge_base/                     # 4 synthetic policy documents + built TF-IDF index
+│   ├── knowledge_base/                     # 4 synthetic policy documents (+ built TF-IDF index, git-ignored)
 │   └── document_cache/                     # Parsed statements (runtime)
 │
-├── models/                                 # credit_risk/ · fraud/ — champion .joblib, model cards, challenger_log.json
-├── mlruns/                                 # MLflow experiment tracking
-├── logs/                                   # audit_trail/<APP id>.json (runtime)
+├── models/                                 # Champion artifacts — registry/cards/CSVs pushed to GitHub
+│   ├── credit_risk/
+│   │   ├── latest_model.json               # Champion model registry
+│   │   ├── challenger_log.json             # Full champion–challenger comparison history
+│   │   ├── model_card_XGBoost_*.json       # Model card (metrics · thresholds · SHAP top features)
+│   │   ├── monitor_scores.csv              # Score/decision monitor data for the dashboard
+│   │   ├── feature_drift_report.csv        # PSI drift per feature
+│   │   └── credit_model_XGBoost_*.joblib   # Champion model (only the champion is pushed)
+│   └── fraud/                              # Same layout for the fraud engine
+│
+├── mlruns/                                 # MLflow experiment tracking (git-ignored)
+├── logs/                                   # audit_trail/<APP id>.json (runtime, git-ignored)
 │
 ├── docs/
-│   ├── architecture/ai_loan_architecture.svg   # 6-layer system diagram
-│   ├── plots/credit_risk/ · plots/fraud/       # Confusion matrix · ROC/PR curves
-│   ├── reports/                                # Model summaries · KB ingest · simulation · test coverage
-│   ├── screenshots/                            # Ops dashboard + portal screens (credit + fraud)
-│   └── gifs/                                   # system_demo.gif · User_Portal.gif
+│   ├── architecture/
+│   │   └── ai_loan_architecture.svg        # 6-layer system architecture diagram
+│   ├── plots/
+│   │   ├── credit_risk/                    # confusion_matrix.png · roc_pr_curves.png
+│   │   └── fraud/                          # confusion_matrix.png · roc_pr_curves.png
+│   ├── reports/
+│   │   ├── credit_risk_model_summary.png   # Credit training & evaluation summary
+│   │   ├── fraud_model_summary.png         # Fraud training & evaluation summary
+│   │   ├── knowledge_base.png              # RAG ingestion terminal output
+│   │   ├── simulation.png                  # Simulation run terminal output
+│   │   └── test_coverage1.png … 3.png      # pytest 242/242 + coverage report
+│   ├── screenshots/                        # Ops dashboard + portal screens (credit + fraud)
+│   └── gifs/
+│       ├── system_demo.gif                 # End-to-end system demo
+│       └── User_Portal.gif                 # User portal walkthrough
 │
-├── tests/                                  # 240 pytest tests (see Test Coverage)
+├── tests/                                  # 242 pytest tests across 14 files (see Test Coverage)
 ├── .github/workflows/ci.yml                # ingest → pytest → API smoke test (underwrite → explain → letter → chat)
-├── Dockerfile · Dockerfile.dashboard · docker-compose.yml · render.yaml
-├── requirements.txt · requirements_api.txt · requirements_dashboard.txt
-├── DAY1_NOTES.md … DAY5_NOTES.md           # What was built each day, bugs found, open items
-├── LICENSE · README.md
+├── .streamlit/config.toml                  # Forces the light theme (portal CSS is light-only)
+├── Dockerfile                              # FastAPI production image
+├── Dockerfile.dashboard                    # Streamlit dashboard container
+├── docker-compose.yml                      # API + dashboard + portal (ports 8000 · 8501 · 8502)
+├── render.yaml                             # Render.com deployment config
+├── DEPLOYMENT.md                           # GitHub → Render → Streamlit Cloud steps
+├── .env.example                            # Environment variables template (real .env is git-ignored)
+├── .gitignore
+├── .dockerignore
+├── requirements.txt                        # Full dependencies (training + CI)
+├── requirements_api.txt                    # Lean API deps for Render / Docker (versions pinned)
+├── requirements_dashboard.txt              # Lean dashboard / portal deps
+├── LICENSE                                 # MIT License
+└── README.md                               # This file
 ```
 
 ---
@@ -345,6 +438,18 @@ Download **Give Me Some Credit** (`cs-training.csv`) and **Credit Card Fraud Det
 ```bash
 python scripts/train_model.py --engine credit --credit-path "path/to/cs-training.csv"
 python scripts/train_model.py --engine fraud  --fraud-path  "path/to/creditcard.csv"
+```
+
+Expected output (credit run, abridged from a real log):
+```
+INFO  Credit data validation passed | shape=(148091, 14) | default_rate=0.0674
+INFO  [credit_risk] Split | train_fit=94777 cal=23695 test=29619
+INFO  Tuning: XGBoost  ...
+INFO  Selected model: XGBoost
+INFO  [credit_risk] Brier | before=0.094456 after=0.050985 | threshold_cal=0.2321
+INFO  [credit_risk] Repeated CV | mean_f1=0.4222 std=0.0094
+INFO  Model saved   → models\credit_risk\credit_model_XGBoost_20261015_164445.joblib
+INFO  [credit_risk] CHALLENGER RESULT: PROMOTED | No existing champion — first model auto-promoted
 ```
 
 Each run takes hours on a laptop (RandomizedSearchCV over 14 model families). If LightGBM crashes natively on your machine, skip it — and any other model — without code changes:
@@ -389,7 +494,7 @@ Use one terminal per process; the API keeps running while the others start.
 
 ```bash
 pytest tests/ -v --cov=src --cov-report=term-missing
-# 240 collected · 240 passed
+# 242 collected · 242 passed
 ```
 
 ---
@@ -401,6 +506,18 @@ docker compose up --build                       # API :8000 · Ops dashboard :85
 GEMINI_API_KEY=... docker compose up --build    # optional LLM features
 docker compose down
 ```
+
+```bash
+docker compose up api          # API only
+docker compose up dashboard    # Ops dashboard only
+docker compose up portal       # User portal only
+```
+
+| Service | URL |
+|---|---|
+| FastAPI + Swagger | `http://localhost:8000/docs` |
+| Ops Dashboard | `http://localhost:8501` |
+| User Portal | `http://localhost:8502` |
 
 The API image copies `data/knowledge_base/` and builds the index during the build. Compose mounts only `data/document_cache` (mounting all of `./data` would hide the built index). `render.yaml` runs the ingest script in the API's build command; set `GEMINI_API_KEY` in the Render dashboard (declared `sync: false`). **The Docker and Render files were not built or run during development — build them yourself before relying on them.**
 
@@ -432,6 +549,37 @@ curl -X POST "http://localhost:8000/underwrite" -H "Content-Type: application/js
 ```
 
 `monthly_income` is an actual ₹ amount per month. The response contains `final_verdict`, `confidence_score`, `explanation`, `improvement_suggestions`, `module_outputs`, `shap_top_drivers`, `application` and `decided_at`.
+
+### GET /health · GET /model-info
+
+```json
+{"status": "running", "credit_model_loaded": true, "fraud_model_loaded": true}
+```
+
+`/model-info` returns the `latest_model.json` registry entry of each engine (champion file name, threshold, model-card path).
+
+### Example response of POST /underwrite
+
+Captured from the real API code path with stub models (so the probabilities are illustrative; with the real champions `shap_top_drivers` carries the top SHAP features):
+
+```json
+{
+  "application_id": "APP03676DD79D",
+  "final_verdict": "APPROVE",
+  "confidence_score": 0.8645,
+  "explanation": "Approved because: strong income stability + low existing obligations + clean fraud check",
+  "improvement_suggestions": [],
+  "module_outputs": {
+    "credit_risk":     {"default_probability": 0.05, "risk_band": "LOW", "verdict": "APPROVE", "rule_triggered": null},
+    "fraud_detection": {"fraud_probability": 0.01, "fraud_band": "LOW", "verdict": "APPROVE", "rule_triggered": null},
+    "document_parser": null
+  },
+  "shap_top_drivers": [],
+  "decided_at": "2026-10-22T02:04:29.627020Z",
+  "application": {"full_name": "Asha Verma", "loan_amount_requested": 500000.0, "tenure_months": 36, "loan_purpose": "Personal"},
+  "latency_seconds": 0.045
+}
+```
 
 ---
 
@@ -487,6 +635,22 @@ All gates pass → `PROMOTED` (`latest_model.json` updated). Any gate fails → 
 
 ---
 
+**Real run — first model auto-promotion (credit):**
+
+```
+[credit_risk] CHALLENGER RESULT: PROMOTED | No existing champion — first model auto-promoted
+  Champion  : credit_model_XGBoost_20261015_164445.joblib
+  Threshold : 0.2321 (tuned on the calibration split)
+  ROC-AUC   : 0.8579   PR-AUC : 0.3636   F1 : 0.4298
+[fraud] CHALLENGER RESULT: PROMOTED | No existing champion — first model auto-promoted
+  Champion  : fraud_model_XGBoost_20261015_121938.joblib
+  ROC-AUC   : 0.9551   PR-AUC : 0.7590   F1 : 0.8023
+```
+
+> Every fresh registry auto-promotes its first model — later retrains must clear all 3 gates to replace the champion. Results are logged to `models/<engine>/challenger_log.json` and shown in dashboard Section 2 with per-gate ✅/❌ status.
+
+---
+
 ## 🧱 Training Pipeline Highlights
 
 | Step | Implementation |
@@ -517,6 +681,53 @@ The default maps a typical Indian monthly income (~₹27,000) onto GMSC's median
 
 ---
 
+## 🏦 Underwriting Rules & Decision Bands
+
+Business rules are evaluated **alongside** the ML probability — the model never replaces them. All values live in `src/config.py`.
+
+### Credit engine
+
+| Decision | Trigger | Meaning |
+|---|---|---|
+| `DECLINE_RULE` | Debt ratio > 100 % **or** ≥ 3 instances of 90+ days late | Hard rule — decline regardless of model score |
+| `REVIEW_INCOME` | Monthly income < ₹5,000 | Cannot be assessed automatically — human review |
+| `REVIEW_DEPENDENTS` | ≥ 6 dependents | Affordability needs a human check |
+| `APPROVE` | Calibrated default probability `< 0.30` | Low risk |
+| `REVIEW_MODEL` | `0.30 ≤ p < 0.60` | Medium risk — manual review |
+| `DECLINE_MODEL` | `p ≥ 0.60` | High risk |
+
+> The bands are fixed policy numbers, so the approve / review / decline mix does not shift when the model's F1 threshold (0.2321) is retuned.
+
+### Fraud engine
+
+| Decision | Trigger | Effect on the final decision |
+|---|---|---|
+| `BLOCK` (`HIGH_AMOUNT_RULE`) | Requested amount > ₹50 lakh (card-scale rule of 5,000 is used only in batch evaluation) | Final `DECLINE` — credit model never consulted |
+| `REVIEW` (`CARD_TESTING_PATTERN`) | Requested amount < ₹5,000 | Capped at `MANUAL_REVIEW` |
+| `BLOCK` (model) | Fraud probability ≥ threshold (0.50) | Final `DECLINE` |
+| `REVIEW` | Probability ≥ 0.6 × threshold | Capped at `MANUAL_REVIEW` |
+| `APPROVE` | Otherwise | No effect |
+
+### Final decision priority
+
+`DECLINE` > `MANUAL_REVIEW` > `APPROVE` — the worst verdict from fraud, credit and the document floor wins. Confidence = `0.55 × credit + 0.30 × fraud + 0.15 × document quality`.
+
+---
+
+## 📈 Monitoring Dashboard — 5 Sections
+
+Each section is shown for **both engines** (credit risk · fraud):
+
+| Section | What it shows |
+|---|---|
+| **1. Real-Time Alerts** | High average score · decline/block rate > 25 % · review queue > 20 % · PSI moderate / critical drift |
+| **2. Champion vs Challenger** | Latest decision badge · 3-gate pass/fail status · full history table |
+| **3. Model Performance KPIs** | Score distribution · decision distribution · score statistics |
+| **4. Feature Drift (PSI)** | Per-feature PSI with stable / moderate / critical colour coding |
+| **5. Recent Applications** | Last 50 decisions from the audit trail · pick an application to view its full explanation (SHAP drivers) |
+
+---
+
 ## 📓 Notebooks
 
 | Notebook | Purpose |
@@ -532,7 +743,7 @@ The default maps a typical Indian monthly income (~₹27,000) onto GMSC's median
 ## 🧪 Test Coverage
 
 ```
-240 tests across 13 files — all offline (Gemini HTTP mocked; API tests use a stub model)
+242 tests across 14 files — all offline (Gemini HTTP mocked; API tests use a stub model)
 
   test_module5.py                124  chunker · retrieval · loan math · explainer · letter PDF ·
                                       audit trail · chatbot (rules + Gemini loop) · API endpoints
@@ -548,9 +759,16 @@ The default maps a typical Indian monthly income (~₹27,000) onto GMSC's median
   test_champion_gates.py           3  per-engine ROC-AUC floor
   test_threshold_selection.py      3  threshold tuned on validation, CV F1 at operating threshold
   test_selection_and_importance.py 2  PR-AUC ranking · permutation importance names
+  test_explain_without_shap.py     2  XGBoost explanations work without the `shap` package (lean prod image)
 ```
 
 `scripts/ingest_knowledge_base.py` is not required to run the tests locally, but CI runs it first, then `pytest`, then an API smoke test that walks underwrite → explain → letter → chat.
+
+Measured line coverage of `src/` (`pytest --cov=src`, 240-test run): **72 %** overall — `llm_explainer` 100 %, `chatbot` 94 %, `decision_engine` 92 %, `rag_engine` / `doc_generator` / `preprocessing` ≈ 88 %. The training orchestrator (`training_pipeline.py` 0 %) and most of `evaluation.py` (35 %) are **not** exercised by pytest because a real training run takes hours; they were run end-to-end on the real data and on tiny synthetic datasets instead.
+
+![Test Coverage 1](docs/reports/test_coverage1.png)
+![Test Coverage 2](docs/reports/test_coverage2.png)
+![Test Coverage 3](docs/reports/test_coverage3.png)
 
 ---
 
@@ -568,7 +786,35 @@ The default maps a typical Indian monthly income (~₹27,000) onto GMSC's median
 | **Audit** | One JSON per decision under `logs/audit_trail/` |
 | **Monitoring** | PSI drift per feature · score alerts · champion–challenger history · recent applications |
 | **CI/CD** | GitHub Actions — ingest → pytest → API smoke test |
-| **Deployment** | Dockerfiles + `docker-compose.yml` + `render.yaml` (not built in development) |
+| **Deployment** | Render.com (FastAPI) + Streamlit Community Cloud (portal + dashboard) · Dockerfiles + `docker-compose.yml` (not built in development) |
+
+---
+
+## 📊 Business Impact
+
+Computed from the **held-out test split** with the production decision bands (credit engine, `n = 29,619`; fraud engine, `n = 56,746`):
+
+| Metric | Value |
+|---|---|
+| Applications auto-approved (credit engine) | **69.2 %** (20,501) |
+| Applications auto-declined (model + hard rules) | **14.7 %** (4,353) |
+| Applications routed to manual review | **16.1 %** (4,765) |
+| **Straight-through decisions (no human needed)** | **83.9 %** |
+| Fraud caught at the operating threshold | **71 of 95** (recall 0.747 · precision 0.866 · 11 false alarms) |
+| Fraud engine flags on the test split | 95 blocks (82 model + 13 rule) + 6 reviews out of 56,746 (0.17 % blocked) |
+| Review queue vs dashboard alert limit | 16.1 % vs 20 % limit — inside tolerance |
+| Decline/block rate vs dashboard alert limit | 14.7 % vs 25 % limit — inside tolerance |
+
+**Illustrative staffing impact** — *assumption, change it for your desk*: if one manual underwriting review takes **15 minutes**, then per 1,000 applications 839 straight-through decisions free about **210 reviewer-hours** (`839 × 15 min`), while the remaining 161 stay with humans.
+
+**Model cost evaluation (test split, model units):**
+
+| Engine | Missed positives (FN) | False alarms (FP) | Missed-loss | Review cost | Total |
+|---|---|---|---|---|---|
+| Credit | 992 | 1,669 | 3,548,350.20 | 83,450.00 | 3,631,800.20 |
+| Fraud | 24 | 11 | 4,850.29 | 165.00 | 5,015.29 |
+
+> These totals are in the model's own units (GMSC dollar-scale income, card-scale amounts), not real rupees — use them to **compare models**, not to quote a business saving. Credit loss = `monthly_income × 0.6` per missed default, review cost = 50 per false alarm; fraud review cost = 15 per false alarm.
 
 ---
 
@@ -591,7 +837,9 @@ The default maps a typical Indian monthly income (~₹27,000) onto GMSC's median
 15. **Privacy detail:** the fact sheet sent to Gemini excludes name, income and bureau numbers, but the engine's explanation sentence may contain an existing-EMI amount taken from an uploaded statement.
 16. **Guardrails reduce, not eliminate, risk.** Topic gating and prompt rules cannot fully prevent prompt injection or off-topic drift.
 17. **Chat sessions are in-memory and per-process** (single worker only; lost on restart).
-18. **Docker and Render files were never built here**, and the portal's pinned chat button was verified on one Streamlit version only.
+18. **Docker files were never built or run.** The Render API and the Streamlit portal were deployed by hand and checked manually, not load-tested; the portal's pinned chat button was verified on one Streamlit version only.
+19. **Free-tier hosting is not durable.** The Render API sleeps when idle (30–60 s cold start) and its disk is ephemeral, so audit trails and chat sessions reset on restart; the Streamlit dashboard reads only the files committed to the repo and cannot show live applications.
+20. **Model pickles are version-bound.** `requirements_api.txt` pins `numpy`, `pandas`, `scikit-learn`, `scipy`, `xgboost`, `imbalanced-learn` and `joblib` to the training environment; upgrading any of them can break the champion files.
 
 ---
 
@@ -633,7 +881,21 @@ The default maps a typical Indian monthly income (~₹27,000) onto GMSC's median
 | 11 | BC5CDR Clinical NER | Biomedical NLP | BioBERT | F1 = 0.8847 · Chemical F1 = 0.9239 |
 | 12 | News Topic Modeling | Media Analytics | LDA (Gensim) | Cv = 0.6225 · Diversity = 0.92 |
 | 13 | Chest X-Ray Diagnosis | Healthcare AI | DenseNet121 | Mean AUC = 0.7864 · 14 classes |
-| 14 | **AI Loan Underwriting Platform** | **BFSI / Fintech** | **XGBoost (credit + fraud)** | **Credit ROC-AUC = 0.858 · Fraud ROC-AUC = 0.955 · 240 tests** |
+| 14 | Real-Time Object Detection | Computer Vision / Retail-Security | YOLOv8s | mAP50-95 = 0.5341 · 32 FPS |
+| 15 | Face Emotion Recognition | EdTech / Retail CX | CNN-from-scratch | Macro-F1 = 0.5950 · 7 classes |
+| 16 | Customer Segmentation Engine | E-Commerce / BFSI | DBSCAN (Unsupervised) | Silhouette = 0.4056 |
+| 17 | Market Basket Analysis (Instacart) | Retail / Quick-Commerce | Apriori | 68,820 rules · mean lift = 15.66 |
+| 18 | E-Commerce / OTT Recommender | E-Commerce / Streaming | Hybrid (SVD + Content) | NDCG@10 = 0.0407 · 4 candidates |
+| 19 | Hospital Readmission Prediction | Healthcare / Hospital Ops | ExtraTrees | F1 = 0.2702 · ROC-AUC = 0.6513 |
+| 20 | HR Policy Intelligence Chatbot | HR Tech / Enterprise GenAI | Gemini 3.6 Flash + RAG | 30/30 tests · guardrail threshold=0.35 |
+| 21 | Employee Attrition Prediction | HR Tech / People Analytics | NeuralNet (MLP) | F1 = 0.3902 · ROC-AUC = 0.6698 |
+| 22 | ANN From Scratch — MNIST Digit Recognizer | Deep Learning Fundamentals | From-scratch ANN | Test Acc = 0.9740 · Macro F1 = 0.9739 |
+| 23 | Insurance Premium Prediction | Insurance / Actuarial ML | RandomForest | RMSLE = 1.1586 · 1.2M real policies |
+| 24 | Health Insurance Cross-Sell | Insurance / BFSI | ExtraTrees | ROC-AUC = 0.8404 · 67.8% calls saved |
+| 25 | Ride Fare Price Prediction | Mobility / Ride-Hailing | LightGBM | RMSE = $3.81 · R² = 0.8419 · 55M rows |
+| 26 | E-Commerce BI & SQL Analytics | Retail Analytics / BI | SQL + FastAPI + Streamlit | 40 tests passing · 100K orders |
+| 27 | AgriSense AI | AgriTech | EfficientNetB3 | Accuracy = 98.44% · Macro-F1 = 0.9843 · 38 classes |
+| 28 | **AI Loan Underwriting Platform** | **BFSI / Fintech** | **XGBoost (credit + fraud)** | **Credit ROC-AUC = 0.858 · Fraud ROC-AUC = 0.955 · 242 tests** |
 
 ---
 
