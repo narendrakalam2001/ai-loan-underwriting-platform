@@ -19,6 +19,12 @@
 import os
 import json
 import glob
+import sys
+
+# Make `src` importable no matter how Streamlit is launched. `streamlit run <file>`
+# (Render / Streamlit Community Cloud) puts only the script's own folder on
+# sys.path, not the project root, so `from src.config import ...` would crash.
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
