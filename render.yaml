@@ -5,6 +5,13 @@
 # Streamlit ops dashboard, and the Streamlit user portal.
 # Free-tier services spin down when idle — the first request
 # after idling may take 30-60s (cold start).
+#
+# BEFORE YOU DEPLOY
+#  * Render appends a random suffix if the service name is taken, so after
+#    the API is live copy its REAL URL into UNDERWRITING_API_URL (portal block).
+#  * Only the API is required. If you host the portal / dashboard on Streamlit
+#    Community Cloud instead, delete those two blocks.
+#  * Free instances have an ephemeral disk: logs/audit_trail is lost on restart.
 # ============================================================
 
 services:
@@ -46,4 +53,5 @@ services:
       - key: PYTHON_VERSION
         value: 3.11.9
       - key: UNDERWRITING_API_URL
+        # replace with the real URL of your API service (no trailing slash)
         value: https://ai-loan-underwriting-api.onrender.com
