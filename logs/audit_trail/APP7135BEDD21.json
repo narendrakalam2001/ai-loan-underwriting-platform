@@ -1,0 +1,53 @@
+{
+  "application_id": "APP7135BEDD21",
+  "final_verdict": "APPROVE",
+  "confidence_score": 0.7671,
+  "explanation": "Approved because: 'has delinquency history' was the strongest driver of this decision",
+  "improvement_suggestions": [],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.2321,
+      "risk_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0007,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 1.1526
+    },
+    {
+      "feature": "total_late_incidents",
+      "shap_value": -0.6143
+    },
+    {
+      "feature": "times_90_days_late",
+      "shap_value": -0.5566
+    },
+    {
+      "feature": "times_30_59_days_late",
+      "shap_value": -0.549
+    },
+    {
+      "feature": "revolving_utilization",
+      "shap_value": 0.4665
+    }
+  ],
+  "decided_at": "2026-10-22T07:45:56.924720Z",
+  "application": {
+    "full_name": "Simulated Applicant 1248",
+    "loan_amount_requested": 271721.56959167,
+    "tenure_months": 24,
+    "loan_purpose": "Home Renovation"
+  }
+}

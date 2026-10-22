@@ -1,0 +1,53 @@
+{
+  "application_id": "APP8D90A5FEFD",
+  "final_verdict": "APPROVE",
+  "confidence_score": 0.8445,
+  "explanation": "Approved because: 'total late incidents' was the strongest driver of this decision",
+  "improvement_suggestions": [],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.0817,
+      "risk_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0185,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "total_late_incidents",
+      "shap_value": -2.0557
+    },
+    {
+      "feature": "revolving_utilization",
+      "shap_value": 0.6599
+    },
+    {
+      "feature": "credit_lines_per_dependent",
+      "shap_value": -0.4343
+    },
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 0.3171
+    },
+    {
+      "feature": "real_estate_loans",
+      "shap_value": -0.3003
+    }
+  ],
+  "decided_at": "2026-10-16T12:38:27.249587Z",
+  "application": {
+    "full_name": "Simulated Applicant 7567",
+    "loan_amount_requested": 305895.1733298083,
+    "tenure_months": 60,
+    "loan_purpose": "Business"
+  }
+}

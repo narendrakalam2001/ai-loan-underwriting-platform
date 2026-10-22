@@ -1,0 +1,55 @@
+{
+  "application_id": "APP07E19D8C18",
+  "final_verdict": "MANUAL_REVIEW",
+  "confidence_score": 0.5782,
+  "explanation": "Routed to manual review because: credit risk score in the medium band + 'has delinquency history' was the strongest driver of this decision",
+  "improvement_suggestions": [
+    "Wait 6 months to improve credit history, then reapply"
+  ],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.5758,
+      "risk_band": "MEDIUM",
+      "verdict": "MANUAL_REVIEW",
+      "rule_triggered": null
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0004,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 1.0675
+    },
+    {
+      "feature": "revolving_utilization",
+      "shap_value": 0.9609
+    },
+    {
+      "feature": "times_90_days_late",
+      "shap_value": -0.4407
+    },
+    {
+      "feature": "age",
+      "shap_value": 0.4343
+    },
+    {
+      "feature": "credit_lines_per_dependent",
+      "shap_value": -0.3761
+    }
+  ],
+  "decided_at": "2026-10-16T12:38:22.059059Z",
+  "application": {
+    "full_name": "Simulated Applicant 7562",
+    "loan_amount_requested": 1209854.2202231889,
+    "tenure_months": 12,
+    "loan_purpose": "Home Renovation"
+  }
+}

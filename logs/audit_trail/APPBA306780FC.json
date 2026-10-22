@@ -1,0 +1,53 @@
+{
+  "application_id": "APPBA306780FC",
+  "final_verdict": "APPROVE",
+  "confidence_score": 0.8864,
+  "explanation": "Approved because: 'total late incidents' was the strongest driver of this decision",
+  "improvement_suggestions": [],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.0156,
+      "risk_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "total_late_incidents",
+      "shap_value": -2.2295
+    },
+    {
+      "feature": "credit_lines_per_dependent",
+      "shap_value": -0.9777
+    },
+    {
+      "feature": "age",
+      "shap_value": -0.3285
+    },
+    {
+      "feature": "real_estate_loans",
+      "shap_value": -0.3045
+    },
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 0.2968
+    }
+  ],
+  "decided_at": "2026-10-16T12:38:18.605906Z",
+  "application": {
+    "full_name": "Simulated Applicant 6157",
+    "loan_amount_requested": 436035.73798503896,
+    "tenure_months": 24,
+    "loan_purpose": "Wedding"
+  }
+}

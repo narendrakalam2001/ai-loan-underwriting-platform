@@ -1,0 +1,53 @@
+{
+  "application_id": "APP02BF69B26B",
+  "final_verdict": "APPROVE",
+  "confidence_score": 0.8888,
+  "explanation": "Approved because: 'total late incidents' was the strongest driver of this decision",
+  "improvement_suggestions": [],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.0112,
+      "risk_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0002,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "total_late_incidents",
+      "shap_value": -2.3806
+    },
+    {
+      "feature": "credit_lines_per_dependent",
+      "shap_value": -0.8657
+    },
+    {
+      "feature": "real_estate_loans",
+      "shap_value": -0.8425
+    },
+    {
+      "feature": "revolving_utilization",
+      "shap_value": -0.2958
+    },
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 0.2488
+    }
+  ],
+  "decided_at": "2026-10-22T07:45:47.799265Z",
+  "application": {
+    "full_name": "Simulated Applicant 2870",
+    "loan_amount_requested": 393521.7913461077,
+    "tenure_months": 60,
+    "loan_purpose": "Education"
+  }
+}

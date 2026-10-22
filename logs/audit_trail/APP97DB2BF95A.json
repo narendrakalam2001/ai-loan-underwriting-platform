@@ -1,0 +1,55 @@
+{
+  "application_id": "APP97DB2BF95A",
+  "final_verdict": "DECLINE",
+  "confidence_score": 0.3449,
+  "explanation": "Declined because: credit risk score in the high band + 'has delinquency history' was the strongest driver of this decision",
+  "improvement_suggestions": [
+    "Wait 6 months to improve credit history, then reapply"
+  ],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 1.0,
+      "risk_band": "HIGH",
+      "verdict": "DECLINE",
+      "rule_triggered": null
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0002,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 1.2766
+    },
+    {
+      "feature": "open_credit_lines",
+      "shap_value": 0.8652
+    },
+    {
+      "feature": "credit_lines_per_dependent",
+      "shap_value": 0.7496
+    },
+    {
+      "feature": "age",
+      "shap_value": 0.6719
+    },
+    {
+      "feature": "total_late_incidents",
+      "shap_value": -0.6288
+    }
+  ],
+  "decided_at": "2026-10-22T07:45:57.995413Z",
+  "application": {
+    "full_name": "Simulated Applicant 5992",
+    "loan_amount_requested": 288232.90303761134,
+    "tenure_months": 12,
+    "loan_purpose": "Personal"
+  }
+}

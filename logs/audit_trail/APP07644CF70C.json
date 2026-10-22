@@ -1,0 +1,56 @@
+{
+  "application_id": "APP07644CF70C",
+  "final_verdict": "DECLINE",
+  "confidence_score": 0.5783,
+  "explanation": "Declined because: high debt ratio + 'has delinquency history' was the strongest driver of this decision",
+  "improvement_suggestions": [
+    "Reduce existing debt so monthly obligations stay well below your income",
+    "Wait 6 months to improve credit history, then reapply"
+  ],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.5758,
+      "risk_band": "MEDIUM",
+      "verdict": "DECLINE",
+      "rule_triggered": "HIGH_DEBT_RATIO"
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0002,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 1.0336
+    },
+    {
+      "feature": "revolving_utilization",
+      "shap_value": 0.8152
+    },
+    {
+      "feature": "credit_lines_per_dependent",
+      "shap_value": -0.3558
+    },
+    {
+      "feature": "times_60_89_days_late",
+      "shap_value": -0.3489
+    },
+    {
+      "feature": "real_estate_loans",
+      "shap_value": -0.331
+    }
+  ],
+  "decided_at": "2026-10-22T07:45:52.638742Z",
+  "application": {
+    "full_name": "Simulated Applicant 1640",
+    "loan_amount_requested": 1991153.4005658391,
+    "tenure_months": 12,
+    "loan_purpose": "Home Renovation"
+  }
+}

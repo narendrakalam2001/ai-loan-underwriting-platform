@@ -1,0 +1,55 @@
+{
+  "application_id": "APPC21B4B2A08",
+  "final_verdict": "DECLINE",
+  "confidence_score": 0.5578,
+  "explanation": "Declined because: credit risk score in the high band + 'has delinquency history' was the strongest driver of this decision",
+  "improvement_suggestions": [
+    "Wait 6 months to improve credit history, then reapply"
+  ],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.6129,
+      "risk_band": "HIGH",
+      "verdict": "DECLINE",
+      "rule_triggered": null
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0004,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 1.0292
+    },
+    {
+      "feature": "revolving_utilization",
+      "shap_value": 0.7361
+    },
+    {
+      "feature": "times_60_89_days_late",
+      "shap_value": -0.3927
+    },
+    {
+      "feature": "real_estate_loans",
+      "shap_value": -0.2969
+    },
+    {
+      "feature": "times_30_59_days_late",
+      "shap_value": -0.2589
+    }
+  ],
+  "decided_at": "2026-10-22T07:45:49.407515Z",
+  "application": {
+    "full_name": "Simulated Applicant 3082",
+    "loan_amount_requested": 1361214.746692746,
+    "tenure_months": 12,
+    "loan_purpose": "Business"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "application_id": "APP8F5E96DB22",
+  "final_verdict": "MANUAL_REVIEW",
+  "confidence_score": 0.6692,
+  "explanation": "Routed to manual review because: credit risk score in the medium band + 'has delinquency history' was the strongest driver of this decision",
+  "improvement_suggestions": [
+    "Wait 6 months to improve credit history, then reapply"
+  ],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.4105,
+      "risk_band": "MEDIUM",
+      "verdict": "MANUAL_REVIEW",
+      "rule_triggered": null
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 1.0292
+    },
+    {
+      "feature": "open_credit_lines",
+      "shap_value": -0.4108
+    },
+    {
+      "feature": "real_estate_loans",
+      "shap_value": -0.3539
+    },
+    {
+      "feature": "times_30_59_days_late",
+      "shap_value": -0.3012
+    },
+    {
+      "feature": "revolving_utilization",
+      "shap_value": 0.2375
+    }
+  ],
+  "decided_at": "2026-10-16T12:38:24.462830Z",
+  "application": {
+    "full_name": "Simulated Applicant 5158",
+    "loan_amount_requested": 2553401.734122419,
+    "tenure_months": 24,
+    "loan_purpose": "Business"
+  }
+}

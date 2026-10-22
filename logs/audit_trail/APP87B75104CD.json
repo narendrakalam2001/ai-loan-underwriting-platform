@@ -1,0 +1,55 @@
+{
+  "application_id": "APP87B75104CD",
+  "final_verdict": "MANUAL_REVIEW",
+  "confidence_score": 0.5782,
+  "explanation": "Routed to manual review because: credit risk score in the medium band + 'has delinquency history' was the strongest driver of this decision",
+  "improvement_suggestions": [
+    "Wait 6 months to improve credit history, then reapply"
+  ],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.5758,
+      "risk_band": "MEDIUM",
+      "verdict": "MANUAL_REVIEW",
+      "rule_triggered": null
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0004,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 1.0261
+    },
+    {
+      "feature": "revolving_utilization",
+      "shap_value": 0.8425
+    },
+    {
+      "feature": "times_60_89_days_late",
+      "shap_value": -0.3918
+    },
+    {
+      "feature": "credit_lines_per_dependent",
+      "shap_value": -0.3368
+    },
+    {
+      "feature": "open_credit_lines",
+      "shap_value": -0.3051
+    }
+  ],
+  "decided_at": "2026-10-16T12:38:22.553808Z",
+  "application": {
+    "full_name": "Simulated Applicant 2520",
+    "loan_amount_requested": 2776368.1043953924,
+    "tenure_months": 24,
+    "loan_purpose": "Education"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "application_id": "APP5942A37999",
+  "final_verdict": "APPROVE",
+  "confidence_score": 0.8851,
+  "explanation": "Approved because: 'total late incidents' was the strongest driver of this decision",
+  "improvement_suggestions": [],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.0079,
+      "risk_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0185,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "total_late_incidents",
+      "shap_value": -2.4655
+    },
+    {
+      "feature": "real_estate_loans",
+      "shap_value": -0.7369
+    },
+    {
+      "feature": "credit_lines_per_dependent",
+      "shap_value": -0.5363
+    },
+    {
+      "feature": "revolving_utilization",
+      "shap_value": -0.4545
+    },
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 0.2346
+    }
+  ],
+  "decided_at": "2026-10-16T12:38:17.689701Z",
+  "application": {
+    "full_name": "Simulated Applicant 6177",
+    "loan_amount_requested": 741657.6715017877,
+    "tenure_months": 24,
+    "loan_purpose": "Personal"
+  }
+}

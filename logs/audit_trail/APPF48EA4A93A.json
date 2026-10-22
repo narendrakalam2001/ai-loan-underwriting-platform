@@ -1,0 +1,56 @@
+{
+  "application_id": "APPF48EA4A93A",
+  "final_verdict": "MANUAL_REVIEW",
+  "confidence_score": 0.5783,
+  "explanation": "Routed to manual review because: many dependents + 'has delinquency history' was the strongest driver of this decision",
+  "improvement_suggestions": [
+    "Apply with a co-applicant so household income is shared across fewer dependents",
+    "Wait 6 months to improve credit history, then reapply"
+  ],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.5758,
+      "risk_band": "MEDIUM",
+      "verdict": "MANUAL_REVIEW",
+      "rule_triggered": "MANY_DEPENDENTS"
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0002,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 1.0302
+    },
+    {
+      "feature": "real_estate_loans",
+      "shap_value": -0.293
+    },
+    {
+      "feature": "revolving_utilization",
+      "shap_value": 0.2374
+    },
+    {
+      "feature": "times_30_59_days_late",
+      "shap_value": -0.2351
+    },
+    {
+      "feature": "times_60_89_days_late",
+      "shap_value": -0.211
+    }
+  ],
+  "decided_at": "2026-10-22T07:45:52.107364Z",
+  "application": {
+    "full_name": "Simulated Applicant 6540",
+    "loan_amount_requested": 1018829.5035550637,
+    "tenure_months": 12,
+    "loan_purpose": "Medical"
+  }
+}

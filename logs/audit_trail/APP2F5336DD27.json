@@ -1,0 +1,53 @@
+{
+  "application_id": "APP2F5336DD27",
+  "final_verdict": "APPROVE",
+  "confidence_score": 0.8906,
+  "explanation": "Approved because: 'total late incidents' was the strongest driver of this decision",
+  "improvement_suggestions": [],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.0079,
+      "risk_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0002,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "total_late_incidents",
+      "shap_value": -2.5523
+    },
+    {
+      "feature": "revolving_utilization",
+      "shap_value": -1.0309
+    },
+    {
+      "feature": "credit_lines_per_dependent",
+      "shap_value": -0.5307
+    },
+    {
+      "feature": "real_estate_loans",
+      "shap_value": -0.427
+    },
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 0.2374
+    }
+  ],
+  "decided_at": "2026-10-22T07:45:44.029800Z",
+  "application": {
+    "full_name": "Simulated Applicant 3993",
+    "loan_amount_requested": 695536.9770150124,
+    "tenure_months": 60,
+    "loan_purpose": "Home Renovation"
+  }
+}

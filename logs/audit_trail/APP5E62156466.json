@@ -1,0 +1,56 @@
+{
+  "application_id": "APP5E62156466",
+  "final_verdict": "DECLINE",
+  "confidence_score": 0.6316,
+  "explanation": "Declined because: severe delinquency history + 'has delinquency history' was the strongest driver of this decision",
+  "improvement_suggestions": [
+    "Clear any overdue payments and keep every payment on time for 12-24 months before reapplying",
+    "Wait 6 months to improve credit history, then reapply"
+  ],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.479,
+      "risk_band": "MEDIUM",
+      "verdict": "DECLINE",
+      "rule_triggered": "SEVERE_DELINQUENCY_HISTORY"
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 1.1584
+    },
+    {
+      "feature": "total_late_incidents",
+      "shap_value": -0.3935
+    },
+    {
+      "feature": "times_60_89_days_late",
+      "shap_value": -0.348
+    },
+    {
+      "feature": "revolving_utilization",
+      "shap_value": 0.329
+    },
+    {
+      "feature": "times_30_59_days_late",
+      "shap_value": -0.3109
+    }
+  ],
+  "decided_at": "2026-10-22T07:45:49.945488Z",
+  "application": {
+    "full_name": "Simulated Applicant 5452",
+    "loan_amount_requested": 1774779.393821287,
+    "tenure_months": 60,
+    "loan_purpose": "Home Renovation"
+  }
+}

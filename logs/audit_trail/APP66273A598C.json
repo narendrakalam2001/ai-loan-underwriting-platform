@@ -1,0 +1,53 @@
+{
+  "application_id": "APP66273A598C",
+  "final_verdict": "APPROVE",
+  "confidence_score": 0.8872,
+  "explanation": "Approved because: 'total late incidents' was the strongest driver of this decision",
+  "improvement_suggestions": [],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.0141,
+      "risk_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "total_late_incidents",
+      "shap_value": -2.4795
+    },
+    {
+      "feature": "revolving_utilization",
+      "shap_value": -0.581
+    },
+    {
+      "feature": "credit_lines_per_dependent",
+      "shap_value": -0.5231
+    },
+    {
+      "feature": "real_estate_loans",
+      "shap_value": -0.4339
+    },
+    {
+      "feature": "times_30_59_days_late",
+      "shap_value": -0.2552
+    }
+  ],
+  "decided_at": "2026-10-16T12:38:19.087449Z",
+  "application": {
+    "full_name": "Simulated Applicant 1929",
+    "loan_amount_requested": 370816.1147394588,
+    "tenure_months": 60,
+    "loan_purpose": "Medical"
+  }
+}

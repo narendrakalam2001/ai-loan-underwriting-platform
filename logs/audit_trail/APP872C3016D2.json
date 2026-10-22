@@ -1,0 +1,53 @@
+{
+  "application_id": "APP872C3016D2",
+  "final_verdict": "APPROVE",
+  "confidence_score": 0.8429,
+  "explanation": "Approved because: 'has delinquency history' was the strongest driver of this decision",
+  "improvement_suggestions": [],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.0948,
+      "risk_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 1.1793
+    },
+    {
+      "feature": "total_late_incidents",
+      "shap_value": -0.6716
+    },
+    {
+      "feature": "times_90_days_late",
+      "shap_value": -0.6328
+    },
+    {
+      "feature": "times_30_59_days_late",
+      "shap_value": -0.5359
+    },
+    {
+      "feature": "credit_lines_per_dependent",
+      "shap_value": -0.4211
+    }
+  ],
+  "decided_at": "2026-10-16T12:38:30.098400Z",
+  "application": {
+    "full_name": "Simulated Applicant 6742",
+    "loan_amount_requested": 575495.4248523309,
+    "tenure_months": 48,
+    "loan_purpose": "Medical"
+  }
+}

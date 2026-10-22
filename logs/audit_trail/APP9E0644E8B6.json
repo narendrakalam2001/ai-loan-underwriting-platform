@@ -1,0 +1,56 @@
+{
+  "application_id": "APP9E0644E8B6",
+  "final_verdict": "DECLINE",
+  "confidence_score": 0.3449,
+  "explanation": "Declined because: high debt ratio + 'has delinquency history' was the strongest driver of this decision",
+  "improvement_suggestions": [
+    "Reduce existing debt so monthly obligations stay well below your income",
+    "Wait 6 months to improve credit history, then reapply"
+  ],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 1.0,
+      "risk_band": "HIGH",
+      "verdict": "DECLINE",
+      "rule_triggered": "HIGH_DEBT_RATIO"
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0002,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 1.0336
+    },
+    {
+      "feature": "real_estate_loans",
+      "shap_value": -0.3691
+    },
+    {
+      "feature": "revolving_utilization",
+      "shap_value": 0.3659
+    },
+    {
+      "feature": "times_30_59_days_late",
+      "shap_value": -0.2735
+    },
+    {
+      "feature": "times_90_days_late",
+      "shap_value": 0.2679
+    }
+  ],
+  "decided_at": "2026-10-16T12:38:25.362689Z",
+  "application": {
+    "full_name": "Simulated Applicant 3480",
+    "loan_amount_requested": 2577817.836956528,
+    "tenure_months": 12,
+    "loan_purpose": "Personal"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "application_id": "APP8610D13478",
+  "final_verdict": "APPROVE",
+  "confidence_score": 0.7874,
+  "explanation": "Approved because: 'total late incidents' was the strongest driver of this decision",
+  "improvement_suggestions": [],
+  "module_outputs": {
+    "credit_risk": {
+      "module": "credit_risk",
+      "default_probability": 0.1954,
+      "risk_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "fraud_detection": {
+      "module": "fraud_detection",
+      "fraud_probability": 0.0004,
+      "fraud_band": "LOW",
+      "verdict": "APPROVE",
+      "rule_triggered": null
+    },
+    "document_parser": null
+  },
+  "shap_top_drivers": [
+    {
+      "feature": "total_late_incidents",
+      "shap_value": -2.0615
+    },
+    {
+      "feature": "revolving_utilization",
+      "shap_value": 1.4386
+    },
+    {
+      "feature": "credit_lines_per_dependent",
+      "shap_value": -0.3909
+    },
+    {
+      "feature": "has_delinquency_history",
+      "shap_value": 0.2952
+    },
+    {
+      "feature": "times_30_59_days_late",
+      "shap_value": -0.2052
+    }
+  ],
+  "decided_at": "2026-10-16T12:38:27.638669Z",
+  "application": {
+    "full_name": "Simulated Applicant 9364",
+    "loan_amount_requested": 697802.2095119286,
+    "tenure_months": 36,
+    "loan_purpose": "Education"
+  }
+}
